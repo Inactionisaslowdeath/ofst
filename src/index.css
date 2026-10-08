@@ -1,6 +1,8 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap");
 @import 'tailwindcss';
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @font-face {
   font-family: "Geist:Medium";
   src: url("https://static.figma.com/font/Geist_wght__1") format("woff2");
@@ -28,15 +30,38 @@
 
 @theme {
   --font-sans: "Inter:Regular", "Inter", sans-serif;
-  --color-background: #ffffff;
-  --color-foreground: #030303;
-  --color-border: #e6e6e6;
+  --color-background: var(--bg);
+  --color-foreground: var(--fg);
+  --color-border: var(--border);
+}
+
+:root {
+  --bg: #ffffff;
+  --fg: #030303;
+  --border: #e6e6e6;
+  --card-bg: #f2f2f2;
+  --card-fg: #030303;
+  --expo-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --expo-in: cubic-bezier(0.7, 0, 0.84, 0);
+}
+
+html.dark {
+  --bg: #09090b;
+  --fg: #f4f4f5;
+  --border: #27272a;
+  --card-bg: #18181b;
+  --card-fg: #f4f4f5;
 }
 
 @layer base {
   html { scroll-behavior: smooth; }
   html.lenis { scroll-behavior: auto; }
-  body { font-family: "Inter", sans-serif; }
+  body {
+    font-family: "Inter", sans-serif;
+    background-color: var(--bg);
+    color: var(--fg);
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
   button, summary, a, input, textarea { -webkit-tap-highlight-color: transparent; }
   button { cursor: pointer; }
   :focus-visible { outline: 2px solid #737373; outline-offset: 4px; }
@@ -45,3 +70,39 @@
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
 }
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 16s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* Progressive blur mask for bottom viewport overlay */
+.bottom-blur-gradient {
+  pointer-events: none;
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 120px;
+  z-index: 30;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.4) 35%, rgba(0,0,0,0.85) 70%, black 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.4) 35%, rgba(0,0,0,0.85) 70%, black 100%);
+}
+
+

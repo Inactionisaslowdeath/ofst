@@ -1,5 +1,5 @@
 {
-  "name": "figma-make-app",
+  "name": "OFST",
   "private": true,
   "version": "1.0.0",
   "type": "module",
@@ -12,6 +12,7 @@
   "dependencies": {
     "framer-motion": "^14.0.0",
     "lenis": "^1.3.26",
+    "lucide-react": "^1.53.0",
     "motion": "^14.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"

@@ -1,9 +1,105 @@
 import { useEffect, useRef, useState } from "react"
 import { animate, scroll } from "motion"
+import { motion, AnimatePresence } from "framer-motion"
 import Lenis from "lenis"
 import "lenis/dist/lenis.css"
+import { ThemeToggleButton } from "./ThemeToggle"
 
 const asset = (name: string) => `/assets/${name}`
+
+function RevealLine({
+  children,
+  className = "",
+  delay = 0,
+}: {
+  children: React.ReactNode
+  className?: string
+  delay?: number
+}) {
+  return (
+    <motion.span
+      initial={{ opacity: 0, y: 18, filter: "blur(10px)" }}
+      whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+      viewport={{ once: true, margin: "0px 0px -60px 0px" }}
+      transition={{
+        duration: 0.8,
+        delay,
+        ease: [0.16, 1, 0.3, 1],
+      }}
+      className={className}
+    >
+      {children}
+    </motion.span>
+  )
+}
+
+function RevealBlock({
+  children,
+  className = "",
+  delay = 0,
+}: {
+  children: React.ReactNode
+  className?: string
+  delay?: number
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 16, filter: "blur(10px)" }}
+      whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+      viewport={{ once: true, margin: "0px 0px -60px 0px" }}
+      transition={{
+        duration: 0.8,
+        delay,
+        ease: [0.16, 1, 0.3, 1],
+      }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  )
+}
+
+function Counter({
+  target,
+  suffix = "",
+}: {
+  target: number
+  suffix?: string
+}) {
+  const [displayValue, setDisplayValue] = useState(0)
+  const ref = useRef<HTMLSpanElement>(null)
+  const inView = useRef(false)
+
+  return (
+    <motion.span
+      ref={ref}
+      initial={{ opacity: 0, y: 16, filter: "blur(10px)" }}
+      whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+      viewport={{ once: true, margin: "0px 0px -60px 0px" }}
+      onViewportEnter={() => {
+        if (inView.current) return
+        inView.current = true
+        animate(0, target, {
+          duration: 1.8,
+          ease: [0.16, 1, 0.3, 1],
+          onUpdate: (latest) => {
+            setDisplayValue(Math.round(latest))
+          },
+        })
+      }}
+      transition={{
+        duration: 0.8,
+        ease: [0.16, 1, 0.3, 1],
+      }}
+      className="inline-block tabular-nums"
+    >
+      {displayValue}
+      {suffix}
+    </motion.span>
+  )
+}
+
+
 const projects = [
   { name: "void®", image: "e3bbf.png" },
   { name: "offset studio", image: "cbc79.png" },
@@ -74,6 +170,8 @@ export default function App() {
   const [contactStatus, setContactStatus] = useState("")
   const lenisRef = useRef<Lenis | null>(null)
 
+
+
   useEffect(() => {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)")
     const updateScrolling = () => {
@@ -126,7 +224,7 @@ export default function App() {
   }, [project])
 
   return (
-    <div id="home" className="min-h-screen bg-white text-[#030303]">
+    <div id="home" className="min-h-screen bg-[var(--bg)] text-[var(--fg)] transition-colors duration-300">
       <main className="mx-auto w-full max-w-[1560px] px-5 md:px-10">
         <section className="relative flex aspect-[1520/991] min-h-[580px] items-center justify-center overflow-hidden md:min-h-0">
           <img
@@ -161,54 +259,97 @@ export default function App() {
                 window.clearInterval(timer);
               };
             }}
-            className="group fixed left-1/2 top-5 z-40 flex min-h-[41px] w-[min(calc(100%-40px),915px)] -translate-x-1/2 items-center justify-between gap-2 rounded-[10px] bg-[#f2f2f2]/95 px-[10px] py-[5px] text-[12px] backdrop-blur-xl transition-[width,background-color,color] duration-300 motion-reduce:transition-none data-[compact=true]:w-[217px] data-[compact=true]:bg-[#030303] data-[compact=true]:text-white md:text-[14px]"
+            className="group fixed left-1/2 top-5 z-40 flex h-[40.91px] min-h-[40.91px] w-[min(calc(100%-40px),915px)] -translate-x-1/2 items-center justify-between gap-2 rounded-[10px] bg-[#f2f2f2]/95 px-[10px] text-[15px] text-[#030303] backdrop-blur-xl transition-[width,background-color,color] duration-300 motion-reduce:transition-none data-[compact=true]:w-[217px] data-[compact=true]:bg-[#030303] data-[compact=true]:text-white dark:data-[compact=true]:bg-white dark:data-[compact=true]:text-[#030303]"
           >
-            <a href="#home" className="flex shrink-0 items-center gap-[3px] text-[20px] leading-[28px] tracking-[-0.8px] md:text-[24px]">
+            <a href="#home" aria-label="OFST" className="flex shrink-0 items-center gap-[7px]">
               <img
                 src={asset("93b2b.png")}
-                className="size-5 object-contain group-data-[compact=true]:invert"
+                className="size-5 shrink-0 object-contain group-data-[compact=true]:invert dark:group-data-[compact=true]:invert-0"
                 alt=""
               />
-              <span>Drkst<sup className="relative -top-[0.1em] text-[9px] tracking-normal">®</sup></span>
+              {/* In light mode: full navbar shows blk logo; compact mode hides blk logo and shows wt logo */}
+              {/* In dark mode: full navbar shows blk logo; compact mode shows blk logo on white background */}
+              <img
+                src="/OFST-blk-trans.svg"
+                alt="OFST"
+                className="block h-[20px] w-auto shrink-0 group-data-[compact=true]:hidden dark:group-data-[compact=true]:block"
+              />
+              <img
+                src="/OFST-wt-trans.svg"
+                alt="OFST"
+                className="hidden h-[20px] w-auto shrink-0 group-data-[compact=true]:block dark:group-data-[compact=true]:hidden"
+              />
             </a>
-            <div className="hidden shrink-0 items-center gap-1 group-data-[compact=true]:hidden lg:flex">
-              <div className="hidden h-7 w-[260px] items-center overflow-hidden rounded-full bg-white px-3 xl:flex">
-                <div className="flex items-center gap-3 whitespace-nowrap [mask-image:linear-gradient(90deg,transparent,black_20%,black_80%,transparent)]">
-                  <span className="text-[#999]">design is a conversation.</span><span>/</span><span>let's talk.</span><span>/</span><span className="text-[#999]">design is a conversation.</span>
+            <div className="flex shrink-0 items-center gap-4">
+              <div className="hidden shrink-0 items-center gap-1 group-data-[compact=true]:hidden lg:flex">
+                <div className="hidden h-7 w-[260px] items-center overflow-hidden rounded-[10px] bg-white px-2.5 text-[14px] xl:flex">
+                  <div className="w-full overflow-hidden [mask-image:linear-gradient(to_right,transparent_0%,black_14%,black_86%,transparent_100%)]">
+                    <div className="animate-marquee whitespace-nowrap">
+                      <span className="flex items-center gap-2 pr-2">
+                        <span className="text-[#999]">design is a conversation.</span>
+                        <span className="text-[#999]">/</span>
+                        <span className="text-black">let's talk.</span>
+                        <span className="text-[#999]">/</span>
+                      </span>
+                      <span className="flex items-center gap-2 pr-2" aria-hidden="true">
+                        <span className="text-[#999]">design is a conversation.</span>
+                        <span className="text-[#999]">/</span>
+                        <span className="text-black">let's talk.</span>
+                        <span className="text-[#999]">/</span>
+                      </span>
+                    </div>
+                  </div>
                 </div>
+                <span aria-hidden="true" className="hidden h-7 w-[5px] rounded-[10px] bg-[#d6d6d6] xl:block" />
+                <span className="flex h-7 shrink-0 items-center gap-[5px] rounded-[10px] bg-white px-[10px] text-[14px] text-black">
+                  <time>
+                  {new Date().toLocaleTimeString("en-US", {
+                    hour: "numeric",
+                    minute: "2-digit",
+                  })}
+                  </time>
+                  <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="9" /><path d="M12 7v5h4" /></svg>
+                </span>
               </div>
-              <span aria-hidden="true" className="hidden h-7 w-[5px] rounded-full bg-[#d6d6d6] xl:block" />
-            <span className="flex h-7 shrink-0 items-center gap-[5px] rounded-full bg-white px-[10px] text-[#696969]">
-              <time>
-              {new Date().toLocaleTimeString("en-US", {
-                hour: "numeric",
-                minute: "2-digit",
-              })}
-              </time>
-              <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="9" /><path d="M12 7v5h4" /></svg>
-            </span>
-            </div>
-            <div className="flex shrink-0 items-center gap-3 md:gap-4">
-              {["About", "Projects", "Services", "Process", "Contact"].map(
-                (label) => (
-                  <a
-                    key={label}
-                    href={`#${label.toLowerCase()}`}
-                    className={label === "Contact" ? "rounded-[5px] px-2 py-[6px] text-center transition-colors hover:bg-white group-data-[compact=true]:min-w-[81px] group-data-[compact=true]:bg-[#f2f2f2] group-data-[compact=true]:text-[#030303] max-[450px]:text-[10px]" : "transition-opacity hover:opacity-50 group-data-[compact=true]:hidden max-[450px]:text-[10px]"}
-                  >
-                    {label}
-                  </a>
-                ),
-              )}
+              <div className="flex shrink-0 items-center gap-3 md:gap-4">
+                {["About", "Projects", "Services", "Process", "Contact"].map(
+                  (label) => (
+                    <a
+                      key={label}
+                      href={`#${label.toLowerCase()}`}
+                      className={
+                        label === "Contact"
+                          ? "inline-flex h-[30px] items-center justify-center rounded-[5px] px-3 text-center text-[#030303] transition-colors hover:bg-[#d6d6d6] hover:text-black group-data-[compact=true]:min-w-[81px] group-data-[compact=true]:bg-[#f2f2f2] group-data-[compact=true]:text-[#030303] dark:group-data-[compact=true]:bg-[#030303] dark:group-data-[compact=true]:text-white max-[450px]:text-[12px]"
+                          : "text-[#030303] transition-opacity hover:opacity-50 group-data-[compact=true]:hidden max-[450px]:text-[12px]"
+                      }
+                    >
+                      {label}
+                    </a>
+                  ),
+                )}
+              </div>
             </div>
           </nav>
-          <div className="pointer-events-none relative text-center text-white">
-            <h1 className="text-[40px] leading-[46.4px] tracking-[-2px]">
-              Drkst®
+          <div className="pointer-events-none relative flex flex-col items-center text-center text-white">
+            <h1 className="flex justify-center">
+              <img
+                src="/OFST-wt-trans.svg"
+                alt="OFST"
+                className="h-[46px] w-auto max-w-[220px]"
+              />
             </h1>
-            <p className="mt-1 text-[16px] tracking-[-0.48px]">
+            <p className="mt-2 text-[16px] tracking-[-0.48px]">
               less but more.
             </p>
+          </div>
+
+          {/* Theme toggle in right corner of Hero section */}
+          <div className="absolute right-5 top-5 z-40 flex items-center">
+            <ThemeToggleButton
+              variant="circle"
+              start="top-right"
+              blur={false}
+            />
           </div>
         </section>
 
@@ -228,35 +369,34 @@ export default function App() {
           id="about"
           className="grid min-h-[550px] scroll-mt-20 items-center gap-10 py-28 md:min-h-[min(52vw,991px)] md:grid-cols-[1fr_2fr] md:content-center md:items-baseline"
         >
-          <div aria-hidden="true" className="flex h-[30px] items-stretch gap-[3px]">
-            <span className="w-8 rounded-[1px] bg-[#030303]" />
-            <span className="w-6 rounded-[1px] bg-[#030303]" />
-            <span className="w-[14px] rounded-[1px] bg-[#030303]" />
+          <RevealBlock delay={0.1} className="flex h-[30px] items-stretch gap-[3px]">
+            <span className="w-8 rounded-[1px] bg-[#030303] dark:bg-white" />
+            <span className="w-6 rounded-[1px] bg-[#030303] dark:bg-white" />
+            <span className="w-[14px] rounded-[1px] bg-[#030303] dark:bg-white" />
             {Array.from({ length: 17 }, (_, index) => (
-              <span key={index} className="w-[2px] rounded-[1px] bg-[#030303]" />
+              <span key={index} className="w-[2px] rounded-[1px] bg-[#030303] dark:bg-white" />
             ))}
-          </div>
+          </RevealBlock>
           <p className="w-full max-w-[1040px] text-[30px] leading-[1.16] tracking-[-1.5px] [container-type:inline-size] md:text-[40px] md:tracking-[-2px]">
-            <span className="md:block md:text-right md:text-[min(40px,3.75cqw)] md:whitespace-nowrap"><span className="text-[#696969]">At Drkst</span> we embrace the tension between minimalism and</span>{" "}
-            <span className="md:block md:text-left md:text-[min(40px,3.75cqw)] md:whitespace-nowrap">impact. We believe that powerful design doesn't need to shout, it</span>{" "}
-            <span className="md:block md:text-left md:text-[min(40px,3.75cqw)]">needs to resonate.</span>
+            <RevealLine delay={0.05} className="md:block md:text-right md:text-[min(40px,3.75cqw)] md:whitespace-nowrap"><span className="text-[#696969]">At OFST</span> we embrace the tension between minimalism and</RevealLine>{" "}
+            <RevealLine delay={0.15} className="md:block md:text-left md:text-[min(40px,3.75cqw)] md:whitespace-nowrap">impact. We believe that powerful design doesn't need to shout, it</RevealLine>{" "}
+            <RevealLine delay={0.25} className="md:block md:text-left md:text-[min(40px,3.75cqw)]">needs to resonate.</RevealLine>
           </p>
         </section>
 
         <section id="projects" className="scroll-mt-20 pt-10">
           <h2 className="mb-5 text-[40px] leading-[46.4px] tracking-[-2px]">
-            Proof of Less
-            <br />
-            <span className="text-[#696969]">But More.</span>
+            <RevealLine delay={0.05} className="block">Proof of Less</RevealLine>
+            <RevealLine delay={0.15} className="block text-[#696969]">But More.</RevealLine>
           </h2>
-          <div className="grid min-h-[500px] grid-cols-1 items-end gap-2 rounded-[10px] bg-[#030303] px-4 pb-4 pt-[10%] md:min-h-[min(65vw,991px)] md:grid-cols-2">
+          <div className="grid min-h-[500px] grid-cols-1 items-end gap-2 rounded-[10px] bg-[#030303] px-4 pb-4 pt-[10%] text-white dark:bg-white dark:text-[#030303] md:min-h-[min(65vw,991px)] md:grid-cols-2">
             <button onClick={() => setProject(0)} className="group text-left">
               <img
                 src={asset(projects[0].image)}
                 alt="void brand identity — black packaging and a red bottle"
                 className="aspect-[738/781] w-full rounded-[5px] object-cover transition-opacity group-hover:opacity-80"
               />
-              <span className="mt-2 block text-[12px] text-white">
+              <span className="mt-2 block text-[12px] text-white dark:text-[#030303]">
                 {projects[0].name}
               </span>
             </button>
@@ -272,7 +412,7 @@ export default function App() {
                     alt={`${item.name} design project`}
                     className="aspect-[239/253] w-full rounded-[5px] object-cover transition-opacity group-hover:opacity-80"
                   />
-                  <span className="mt-2 block text-[12px] text-white">
+                  <span className="mt-2 block text-[12px] text-white dark:text-[#030303]">
                     {item.name}
                   </span>
                 </button>
@@ -280,22 +420,22 @@ export default function App() {
             </div>
           </div>
           <p className="ml-auto mt-20 w-full max-w-[1040px] text-[30px] leading-[1.16] tracking-[-1.5px] [container-type:inline-size] md:text-[40px] md:tracking-[-2px]">
-            <span className="md:block md:text-right md:text-[min(40px,3.75cqw)] md:whitespace-nowrap">We craft minimalistic, purposeful digital experiences that</span>{" "}
-            <span className="md:block md:text-left md:text-[min(40px,3.75cqw)] md:whitespace-nowrap">resonate with clarity and intention. Every project is a story; here's</span>{" "}
-            <span className="md:block md:text-left md:text-[min(40px,3.75cqw)]">what ours says..</span>
+            <RevealLine delay={0.05} className="md:block md:text-right md:text-[min(40px,3.75cqw)] md:whitespace-nowrap">We craft minimalistic, purposeful digital experiences that</RevealLine>{" "}
+            <RevealLine delay={0.15} className="md:block md:text-left md:text-[min(40px,3.75cqw)] md:whitespace-nowrap">resonate with clarity and intention. Every project is a story; here's</RevealLine>{" "}
+            <RevealLine delay={0.25} className="md:block md:text-left md:text-[min(40px,3.75cqw)]">what ours says..</RevealLine>
           </p>
           <div className="grid grid-cols-3 gap-5 py-20 md:py-28">
             {[
-              ["8+", "Crafting Experiences"],
-              ["50+", "Projects Delivered"],
-              ["20+", "Clients Worldwide"],
-            ].map(([number, label]) => (
-              <div key={number} className="text-center">
+              { val: 8, suffix: "+", label: "Crafting Experiences" },
+              { val: 50, suffix: "+", label: "Projects Delivered" },
+              { val: 20, suffix: "+", label: "Clients Worldwide" },
+            ].map(({ val, suffix, label }, index) => (
+              <div key={label} className="text-center">
                 <p className="text-[55px] font-semibold leading-[1.65] tracking-[-5px] md:text-[90px] md:tracking-[-10px]">
-                  {number}
+                  <Counter target={val} suffix={suffix} />
                 </p>
                 <p className="mt-3 text-[12px] tracking-[-0.4px] md:text-[20px]">
-                  {label}
+                  <RevealLine delay={0.15 + index * 0.08}>{label}</RevealLine>
                 </p>
               </div>
             ))}
@@ -303,12 +443,12 @@ export default function App() {
         </section>
 
         <section id="services" className="scroll-mt-20">
-          <div className="flex min-h-[min(65vw,991px)] flex-col justify-between rounded-[5px] bg-[#030303] p-5 text-white max-md:min-h-[470px]">
+          <div className="flex min-h-[min(65vw,991px)] flex-col justify-between rounded-[5px] bg-[#030303] p-5 text-white dark:bg-white dark:text-[#030303] max-md:min-h-[470px]">
             <CornerLabel>What We Do, Perfectly.</CornerLabel>
             <img
               src={asset("12844.png")}
               alt="Studio symbol"
-              className="mx-auto size-5 translate-y-[22px] object-contain max-md:translate-y-[19px]"
+              className="mx-auto size-5 translate-y-[22px] object-contain dark:invert max-md:translate-y-[19px]"
             />
             <div>
               <div className="mb-5 flex -translate-y-[calc(min(65vw,991px)/2-76px)] justify-between text-[12px] max-md:-translate-y-[162px] md:text-[16px]">
@@ -341,30 +481,74 @@ export default function App() {
 
         <section
           id="process"
-          className="flex min-h-[min(55vw,828px)] scroll-mt-20 flex-col rounded-[5px] bg-[#030303] p-5 text-white max-md:min-h-[550px]"
+          className="flex min-h-[min(55vw,828px)] scroll-mt-20 flex-col rounded-[5px] bg-[#030303] p-5 text-white dark:bg-white dark:text-[#030303] max-md:min-h-[550px]"
         >
           <CornerLabel>Less Noise. More Clarity.</CornerLabel>
           <div
             className="flex flex-1 flex-col items-center justify-center px-5 py-20 text-center"
             aria-live="polite"
           >
-            <h2 className="text-[40px] leading-[46.4px] tracking-[-2px]">
-              {steps[step][0]}
-            </h2>
-            <p className="mt-3 text-[16px] tracking-[-0.48px]">
-              {steps[step][1]}
-            </p>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={step}
+                className="flex flex-col items-center"
+              >
+                <h2 className="text-[40px] leading-[46.4px] tracking-[-2px] flex overflow-hidden">
+                  {steps[step][0].split("").map((char, i) => (
+                    <motion.span
+                      key={`${step}-${i}`}
+                      initial={{ opacity: 0, y: 24, filter: "blur(20px)" }}
+                      animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                      exit={{ opacity: 0, y: -16, filter: "blur(12px)" }}
+                      transition={{
+                        duration: 0.42,
+                        ease: [0.16, 1, 0.3, 1],
+                        delay: i * 0.04,
+                      }}
+                      style={{ display: "inline-block", whiteSpace: "pre" }}
+                    >
+                      {char}
+                    </motion.span>
+                  ))}
+                </h2>
+                <motion.p
+                  key={`desc-${step}`}
+                  initial={{ opacity: 0, y: 12, filter: "blur(8px)" }}
+                  animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                  exit={{ opacity: 0, y: -12, filter: "blur(6px)" }}
+                  transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+                  className="mt-3 text-[16px] tracking-[-0.48px]"
+                >
+                  {steps[step][1]}
+                </motion.p>
+              </motion.div>
+            </AnimatePresence>
           </div>
-          <div className="grid grid-cols-5 border-t border-white/20">
+          <div className="relative grid grid-cols-5 border-t border-white/20 dark:border-black/20">
             {steps.map(([label], index) => (
               <button
                 key={label}
                 onClick={() => setStep(index)}
                 aria-pressed={step === index}
-                className={`flex flex-col items-center gap-3 py-7 text-[12px] transition-opacity md:text-[16px] ${
+                className={`relative flex flex-col items-center gap-3 py-7 text-[12px] transition-opacity md:text-[16px] ${
                   step === index ? "opacity-100" : "opacity-40 hover:opacity-80"
                 }`}
               >
+                {/* Loading line indicator write on the line directly above the step button */}
+                <div className="absolute -top-[1.5px] left-0 right-0 h-[2.5px] overflow-hidden">
+                  {step === index ? (
+                    <motion.div
+                      key={`progress-${step}`}
+                      initial={{ scaleX: 0 }}
+                      animate={{ scaleX: 1 }}
+                      transition={{ duration: 4.5, ease: "linear" }}
+                      onAnimationComplete={() => {
+                        setStep((current) => (current + 1) % steps.length)
+                      }}
+                      className="h-full w-full origin-left bg-white dark:bg-[#030303]"
+                    />
+                  ) : null}
+                </div>
                 <span className="text-[12px]">0{index + 1}</span>
                 {label}
               </button>
@@ -375,24 +559,48 @@ export default function App() {
         <section className="py-24">
           <div className="relative mx-auto mb-12 aspect-[820/330] w-full max-w-[820px]">
             <div className="grid grid-cols-9 items-start gap-[1%]">
-              {portraitColumns.map(({ images, offset }) => (
-                <div
-                  key={images[0]}
-                  className={`flex min-w-0 flex-col gap-1 sm:gap-[10px] ${offset}`}
-                >
-                  {images.map((image) => (
-                    <img
-                      key={image}
-                      src={asset(image)}
-                      alt="Creative collaborator"
-                      className="aspect-[83/102] w-full rounded-[5px] object-cover"
-                    />
-                  ))}
-                </div>
-              ))}
+              {portraitColumns.map(({ images, offset }, colIndex) => {
+                // Tight millisecond stagger sequence:
+                // Group 1 (leaders): row 4 & 6 -> 0ms
+                // Group 2: row 2, 5 & 8 -> 50ms
+                // Group 3: row 3 & 7 -> 100ms
+                // Group 4 (settles as others settle): row 1 & 9 -> 160ms
+                const delay =
+                  colIndex === 3 || colIndex === 5
+                    ? 0
+                    : colIndex === 1 || colIndex === 4 || colIndex === 7
+                      ? 0.05
+                      : colIndex === 2 || colIndex === 6
+                        ? 0.1
+                        : 0.16;
+
+                return (
+                  <motion.div
+                    key={images[0]}
+                    initial={{ opacity: 0, y: 80, filter: "blur(10px)" }}
+                    whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                    viewport={{ once: true, margin: "0px 0px -60px 0px" }}
+                    transition={{
+                      duration: 0.9,
+                      delay,
+                      ease: [0.16, 1, 0.3, 1],
+                    }}
+                    className={`flex min-w-0 flex-col gap-1 sm:gap-[10px] ${offset}`}
+                  >
+                    {images.map((image) => (
+                      <img
+                        key={image}
+                        src={asset(image)}
+                        alt="Creative collaborator"
+                        className="aspect-[83/102] w-full rounded-[5px] object-cover"
+                      />
+                    ))}
+                  </motion.div>
+                );
+              })}
             </div>
             <h2 className="absolute inset-x-0 top-[87%] text-center text-[clamp(14px,4vw,40px)] leading-[1.16] tracking-[-0.05em]">
-              Less Fluff, Real Words.
+              <RevealLine delay={0.28}>Less Fluff, Real Words.</RevealLine>
             </h2>
           </div>
           <div className="mx-auto grid max-w-[920px] gap-[10px] md:grid-cols-3">
@@ -406,7 +614,7 @@ export default function App() {
               [
                 "Amira Solis",
                 "UX Lead at Field",
-                "“Working with Drkst felt like collaborating with a design lab. Visionary yet grounded.”",
+                "“Working with OFST felt like collaborating with a design lab. Visionary yet grounded.”",
                 "e1f8b.png",
               ],
               [
@@ -418,7 +626,7 @@ export default function App() {
             ].map(([name, title, quote, image]) => (
               <figure key={name} className="flex flex-col gap-[9px]">
                 <figcaption
-                  className={`flex min-h-[64px] items-center gap-[10px] rounded-[5px] bg-[#f2f2f2] p-3 ${
+                  className={`flex min-h-[64px] items-center gap-[10px] rounded-[5px] bg-[#f2f2f2] p-3 text-[#030303] ${
                     name === "Amira Solis" ? "order-2" : ""
                   }`}
                 >
@@ -428,7 +636,7 @@ export default function App() {
                     className="h-10 w-[51px] rounded-[5px] object-cover"
                   />
                   <div>
-                    <p className="text-[16px] leading-[19.2px] tracking-[-0.48px]">
+                    <p className="text-[16px] leading-[19.2px] tracking-[-0.48px] text-[#030303]">
                       {name}
                     </p>
                     <p className="mt-[5px] text-[12px] leading-[14.4px] tracking-[-0.24px] text-[#696969]">
@@ -436,7 +644,7 @@ export default function App() {
                     </p>
                   </div>
                 </figcaption>
-                <blockquote className="flex min-h-[100px] items-center justify-center rounded-[5px] bg-[#f2f2f2] p-3 text-center text-[16px] leading-[18.4px] tracking-[-0.48px]">
+                <blockquote className="flex min-h-[100px] items-center justify-center rounded-[5px] bg-[#f2f2f2] p-3 text-center text-[16px] leading-[18.4px] tracking-[-0.48px] text-[#030303]">
                   {quote}
                 </blockquote>
               </figure>
@@ -446,7 +654,7 @@ export default function App() {
 
         <section className="py-16 md:py-24">
           <h2 className="mb-14 text-center text-[30px] leading-[1.16] tracking-[-1.5px] md:text-[40px] md:leading-[46.4px] md:tracking-[-2px]">
-            Why Drkst and not any other design studio?
+            <RevealLine>Why OFST and not any other design studio?</RevealLine>
           </h2>
           <div className="mx-auto grid max-w-[1480px] gap-5 xl:grid-cols-[1.55fr_1fr]">
             <div className="grid min-w-0 grid-cols-2 content-start gap-5">
@@ -455,7 +663,7 @@ export default function App() {
                 alt="A sculptural monochrome studio object"
                 className="aspect-[434/340] w-full rounded-[10px] object-cover"
               />
-              <div className="relative flex aspect-[434/340] flex-col items-center overflow-hidden rounded-[10px] border border-[#f2f2f2] bg-white text-[clamp(10px,1.1vw,16px)]">
+              <div className="relative flex aspect-[434/340] flex-col items-center overflow-hidden rounded-[10px] border border-[#f2f2f2] bg-white text-[clamp(10px,1.1vw,16px)] text-[#030303]">
                 <div className="flex flex-col items-center gap-[10px] py-2">
                   {[
                     ["Emerging", "07", "bg-[#ed8500]"],
@@ -468,24 +676,23 @@ export default function App() {
                   ].map(([label, number, color], index) => (
                     <div
                       key={`${label}-${index}`}
-                      className="flex shrink-0 items-center gap-2 rounded-[12px] bg-white px-3 py-[5px] shadow-[0_3px_20px_0_rgba(0,0,0,0.04)]"
+                      className="flex shrink-0 items-center gap-2 rounded-[12px] bg-white px-3 py-[5px] text-[#030303] shadow-[0_3px_20px_0_rgba(0,0,0,0.04)]"
                     >
                       <span
                         className={`size-[7px] shrink-0 rounded-full ${color}`}
                       />
-                      <span className="whitespace-nowrap">{label}</span>
-                      <span className="flex size-[30px] items-center justify-center rounded-[10px] bg-[#f2f2f2] text-[12px]">
+                      <span className="whitespace-nowrap text-[#030303]">{label}</span>
+                      <span className="flex size-[30px] items-center justify-center rounded-[10px] bg-[#f2f2f2] text-[12px] text-[#030303]">
                         {number}
                       </span>
                     </div>
                   ))}
                 </div>
               </div>
-              <div className="col-span-2 flex aspect-[888/530] min-h-[400px] flex-col items-center justify-center gap-9 rounded-[10px] bg-[#f2f2f2] p-6 md:min-h-0 md:gap-[clamp(20px,3vw,45px)]">
-                <h3 className="text-center text-[32px] leading-[41.6px] tracking-[-0.96px]">
-                  Engagement
-                  <br />
-                  <span className="text-[#696969]">Over Time</span>
+              <div className="col-span-2 flex aspect-[888/530] min-h-[400px] flex-col items-center justify-center gap-9 rounded-[10px] bg-[#f2f2f2] p-6 text-[#030303] md:min-h-0 md:gap-[clamp(20px,3vw,45px)]">
+                <h3 className="text-center text-[32px] leading-[41.6px] tracking-[-0.96px] text-[#030303]">
+                  <RevealLine className="block text-[#030303]">Engagement</RevealLine>
+                  <RevealLine delay={0.1} className="block text-[#696969]">Over Time</RevealLine>
                 </h3>
                 <div className="w-full max-w-[315px]">
                   <div
@@ -533,15 +740,15 @@ export default function App() {
                     ))}
                   </div>
                 </div>
-                <div className="flex w-full max-w-[270px] justify-between gap-8 text-[16px]">
+                <div className="flex w-full max-w-[270px] justify-between gap-8 text-[16px] text-[#030303]">
                   {[
-                    ["All Time", "900"],
-                    ["This Month", "300"],
-                  ].map(([label, value]) => (
+                    { label: "All Time", value: 900 },
+                    { label: "This Month", value: 300 },
+                  ].map(({ label, value }) => (
                     <div key={label}>
-                      <p>{label}</p>
-                      <p className="mt-2 text-[32px] leading-[41.6px] tracking-[-0.96px] text-[#696969]">
-                        {value}
+                      <p className="text-[#030303]">{label}</p>
+                      <p className="mt-2 text-[32px] leading-[41.6px] tracking-[-0.96px] text-[#030303]">
+                        <Counter target={value} />
                       </p>
                     </div>
                   ))}
@@ -550,7 +757,7 @@ export default function App() {
             </div>
             <div className="flex min-w-0 flex-col gap-5">
               <div className="flex aspect-[572/260] items-center justify-center rounded-[10px] border border-[#f2f2f2] bg-white">
-                <div className="flex items-center gap-3 rounded-[12px] bg-[#f2f2f2] px-5 py-3 text-[16px] text-[#696969]">
+                <div className="flex items-center gap-3 rounded-[12px] bg-[#f2f2f2] px-5 py-3 text-[16px] text-[#030303]">
                   <img src={asset("a9f8b.svg")} alt="" />
                   Delivering
                 </div>
@@ -560,7 +767,7 @@ export default function App() {
                 alt="Minimal sculptural portrait"
                 className="aspect-[572/509] w-full rounded-[10px] object-cover"
               />
-              <div className="flex min-h-[82px] flex-1 items-center gap-2 rounded-[10px] bg-[#f2f2f2] px-5 py-5">
+              <div className="flex min-h-[82px] flex-1 items-center gap-2 rounded-[10px] bg-[#f2f2f2] px-5 py-5 text-[#030303]">
                 <div className="flex shrink-0 -space-x-2">
                   {["3afa8.png", "8f3c7.png", "52487.png", "5560b.png"].map(
                     (image) => (
@@ -573,8 +780,9 @@ export default function App() {
                     ),
                   )}
                 </div>
-                <p className="text-[14px] tracking-[-0.42px] lg:text-[16px]">
-                  100+ Satisfied Clients
+                <p className="text-[14px] tracking-[-0.42px] text-[#030303] lg:text-[16px]">
+                  <Counter target={100} suffix="+ " />
+                  Satisfied Clients
                 </p>
               </div>
             </div>
@@ -583,9 +791,8 @@ export default function App() {
 
         <section className="grid gap-x-12 gap-y-[60px] py-14 md:grid-cols-2 md:py-16">
             <h2 className="text-[40px] leading-[46.4px] tracking-[-2px] md:col-span-2">
-              Questions..
-              <br />
-              <span className="text-[#696969]">Straight Answers.</span>
+              <RevealLine className="block">Questions..</RevealLine>
+              <RevealLine delay={0.1} className="block text-[#696969]">Straight Answers.</RevealLine>
             </h2>
           <div>
             {questions.map(([question, answer]) => (
@@ -609,15 +816,14 @@ export default function App() {
           </div>
           <div className="flex flex-col items-center text-center md:-translate-y-1">
             <p className="text-[40px] leading-[46.4px] tracking-[-2px]">
-              For any Questions,
-              <br />
-              Reach us
+              <RevealLine className="block">For any Questions,</RevealLine>
+              <RevealLine delay={0.1} className="block">Reach us</RevealLine>
             </p>
             <a
-              href="mailto:hello@Drkst.com"
+              href="mailto:hello@OFST.com"
               className="mt-6 inline-block rounded-[10px] bg-[#f2f2f2] px-3 py-3 text-[20px] leading-[20px] tracking-[-0.8px] text-[#696969] transition-colors hover:bg-[#e6e6e6]"
             >
-              hello@Drkst.com
+              hello@OFST.com
             </a>
           </div>
         </section>
@@ -641,7 +847,7 @@ export default function App() {
               rightAnimation.cancel();
             };
           }}
-          className="relative mb-2 scroll-mt-20 overflow-hidden rounded-[10px] border-[4px] border-[#030303] py-12"
+          className="relative mb-2 scroll-mt-20 overflow-hidden rounded-[10px] border-[4px] border-[#030303] dark:border-white py-12"
         >
           <img
             data-scroll-hand="left"
@@ -657,21 +863,19 @@ export default function App() {
           />
           <div className="relative mx-auto max-w-[500px] text-center">
             <h2 className="text-[32px] leading-[41.6px] tracking-[-0.96px]">
-              Refine Your Vision
+              <RevealLine>Refine Your Vision</RevealLine>
             </h2>
             <p className="mt-3 text-[16px] leading-[18.4px] tracking-[-0.48px]">
-              Wherever you are.
-              <br />
-              Today, tomorrow—whenever.
-              <br />
-              Reach Out.
+              <RevealLine delay={0.05} className="block">Wherever you are.</RevealLine>
+              <RevealLine delay={0.15} className="block">Today, tomorrow—whenever.</RevealLine>
+              <RevealLine delay={0.25} className="block">Reach Out.</RevealLine>
             </p>
             <form
               className="space-y-5 p-5 text-left"
               onSubmit={(event) => {
                 event.preventDefault()
                 const values = new FormData(event.currentTarget)
-                window.location.href = `mailto:hello@Drkst.com?subject=${encodeURIComponent(`Project inquiry from ${values.get("name")}`)}&body=${encodeURIComponent(`${values.get("message")}\n\nReply to: ${values.get("email")}`)}`
+                window.location.href = `mailto:hello@OFST.com?subject=${encodeURIComponent(`Project inquiry from ${values.get("name")}`)}&body=${encodeURIComponent(`${values.get("message")}\n\nReply to: ${values.get("email")}`)}`
                 setContactStatus(
                   "Your email app will open with your message ready to send.",
                 )
@@ -683,7 +887,7 @@ export default function App() {
                   required
                   name="name"
                   placeholder="Rayan Solis"
-                  className="mt-2 h-10 w-full rounded-[10px] bg-[#f2f2f2] px-3 text-[14px] outline-offset-4"
+                  className="mt-2 h-10 w-full rounded-[10px] bg-[#f2f2f2] px-3 text-[14px] text-[#030303] placeholder:text-[#888888] outline-offset-4"
                 />
               </label>
               <label className="block text-[12px]">
@@ -693,7 +897,7 @@ export default function App() {
                   name="email"
                   type="email"
                   placeholder="Hello@gmail.com"
-                  className="mt-2 h-10 w-full rounded-[10px] bg-[#f2f2f2] px-3 text-[14px] outline-offset-4"
+                  className="mt-2 h-10 w-full rounded-[10px] bg-[#f2f2f2] px-3 text-[14px] text-[#030303] placeholder:text-[#888888] outline-offset-4"
                 />
               </label>
               <label className="block text-[12px]">
@@ -703,15 +907,15 @@ export default function App() {
                   name="message"
                   placeholder="Your message"
                   rows={5}
-                  className="mt-2 w-full resize-y rounded-[10px] bg-[#f2f2f2] p-3 text-[14px] outline-offset-4"
+                  className="mt-2 w-full resize-y rounded-[10px] bg-[#f2f2f2] p-3 text-[14px] text-[#030303] placeholder:text-[#888888] outline-offset-4"
                 />
               </label>
-              <button className="w-full rounded-[10px] bg-[#030303] py-3 text-[14px] text-white transition-colors hover:bg-[#333]">
+              <button className="w-full rounded-[10px] bg-[#030303] py-3 text-[14px] text-white transition-colors hover:bg-[#333] dark:bg-white dark:text-[#030303] dark:hover:bg-[#e6e6e6]">
                 Submit
               </button>
               <p
                 role="status"
-                className="text-center text-[18px] font-medium leading-[21px] tracking-[-0.54px] text-[#030303]"
+                className="text-center text-[18px] font-medium leading-[21px] tracking-[-0.54px] text-[#030303] dark:text-white"
               >
                 {contactStatus ||
                   "We keep it simple, fill out the form and we will get back at you."}
@@ -731,14 +935,14 @@ export default function App() {
           />
           <div className="text-center">
             <h2 className="text-[32px] leading-[41.6px] tracking-[-0.96px]">
-              Join Our Weekly Newsletter!
+              <RevealLine>Join Our Weekly Newsletter!</RevealLine>
             </h2>
             <form
               className="relative mt-5"
               onSubmit={(event) => {
                 event.preventDefault()
                 const values = new FormData(event.currentTarget)
-                window.location.href = `mailto:hello@Drkst.com?subject=Newsletter%20subscription&body=${encodeURIComponent(`Please subscribe ${values.get("subscriber")} to your newsletter.`)}`
+                window.location.href = `mailto:hello@OFST.com?subject=Newsletter%20subscription&body=${encodeURIComponent(`Please subscribe ${values.get("subscriber")} to your newsletter.`)}`
                 setSubscribed(true)
               }}
             >
@@ -778,10 +982,12 @@ export default function App() {
             ))}
           </div>
         </div>
-        <div className="w-full py-[5%] [container-type:inline-size]">
-          <p aria-label="Drkst registered" className="whitespace-nowrap text-center font-[Arial,sans-serif] text-[35cqw] font-normal leading-none tracking-[-15px] text-white">
-            <span>Drkst</span><span aria-hidden="true" className="relative top-[0.015em] ml-[0.04em] inline-block align-top text-[28cqw] font-bold leading-none tracking-normal">®</span>
-          </p>
+        <div className="flex w-full justify-center py-[5%]">
+          <img
+            src="/OFST-wt-trans.svg"
+            alt="OFST"
+            className="h-auto w-full max-w-[850px] object-contain"
+          />
         </div>
         <div className="grid gap-2 md:grid-cols-2">
           {[
@@ -819,13 +1025,16 @@ export default function App() {
           ))}
         </div>
         <div className="mt-7 flex flex-wrap justify-between gap-4 text-[12px]">
-          <p>Drkst® 2026. All rights reserved</p>
+          <p>OFST® 2026. All rights reserved</p>
           <p>Made in Framer By Danny</p>
           <a href="#home" className="hover:underline">
             Back to top ↑
           </a>
         </div>
       </footer>
+
+      {/* Viewport bottom blur bar */}
+      <div aria-hidden="true" className="bottom-blur-gradient" />
 
       {project !== null && (
         <div
