@@ -1,9 +1,22 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState, type ComponentProps } from "react"
 import { animate, scroll } from "motion"
-import { motion, AnimatePresence } from "framer-motion"
+import { motion, AnimatePresence, useSpring } from "framer-motion"
+import { Play, Plus } from "lucide-react"
+import {
+  MediaControlBar,
+  MediaController,
+  MediaMuteButton,
+  MediaPlayButton,
+  MediaSeekBackwardButton,
+  MediaSeekForwardButton,
+  MediaTimeDisplay,
+  MediaTimeRange,
+  MediaVolumeRange,
+} from "media-chrome/react"
 import Lenis from "lenis"
 import "lenis/dist/lenis.css"
 import { ThemeToggleButton } from "./ThemeToggle"
+import Skiper30 from "./Skiper30"
 
 const asset = (name: string) => `/assets/${name}`
 
@@ -100,6 +113,313 @@ function Counter({
 }
 
 
+const ROLL_STAGGER = 0.035;
+
+function TextRoll({
+  children,
+  className = "",
+  center = false,
+}: {
+  children: string;
+  className?: string;
+  center?: boolean;
+}) {
+  return (
+    <motion.span
+      initial="initial"
+      whileHover="hovered"
+      className={`relative inline-flex items-center overflow-hidden leading-none ${className}`}
+    >
+      <div className="flex items-center">
+        {children.split("").map((l, i) => {
+          const delay = center
+            ? ROLL_STAGGER * Math.abs(i - (children.length - 1) / 2)
+            : ROLL_STAGGER * i;
+
+          return (
+            <motion.span
+              variants={{
+                initial: {
+                  y: 0,
+                },
+                hovered: {
+                  y: "-100%",
+                },
+              }}
+              transition={{
+                duration: 0.3,
+                ease: "easeInOut",
+                delay,
+              }}
+              className="inline-block"
+              key={i}
+            >
+              {l === " " ? "\u00A0" : l}
+            </motion.span>
+          );
+        })}
+      </div>
+      <div className="absolute inset-0 flex items-center select-none pointer-events-none" aria-hidden="true">
+        {children.split("").map((l, i) => {
+          const delay = center
+            ? ROLL_STAGGER * Math.abs(i - (children.length - 1) / 2)
+            : ROLL_STAGGER * i;
+
+          return (
+            <motion.span
+              variants={{
+                initial: {
+                  y: "100%",
+                },
+                hovered: {
+                  y: 0,
+                },
+              }}
+              transition={{
+                duration: 0.3,
+                ease: "easeInOut",
+                delay,
+              }}
+              className="inline-block"
+              key={i}
+            >
+              {l === " " ? "\u00A0" : l}
+            </motion.span>
+          );
+        })}
+      </div>
+    </motion.span>
+  );
+}
+
+export type VideoPlayerProps = ComponentProps<typeof MediaController>;
+export const VideoPlayer = ({ style, ...props }: VideoPlayerProps) => (
+  <MediaController style={{ ...style }} {...props} />
+);
+
+export type VideoPlayerControlBarProps = ComponentProps<typeof MediaControlBar>;
+export const VideoPlayerControlBar = (props: VideoPlayerControlBarProps) => (
+  <MediaControlBar {...props} />
+);
+
+export type VideoPlayerTimeRangeProps = ComponentProps<typeof MediaTimeRange>;
+export const VideoPlayerTimeRange = ({
+  className = "",
+  ...props
+}: VideoPlayerTimeRangeProps) => (
+  <MediaTimeRange
+    className={`[--media-range-thumb-opacity:0] [--media-range-track-height:2px] ${className}`}
+    {...props}
+  />
+);
+
+export type VideoPlayerTimeDisplayProps = ComponentProps<typeof MediaTimeDisplay>;
+export const VideoPlayerTimeDisplay = ({
+  className = "",
+  ...props
+}: VideoPlayerTimeDisplayProps) => (
+  <MediaTimeDisplay className={`p-2.5 ${className}`} {...props} />
+);
+
+export type VideoPlayerVolumeRangeProps = ComponentProps<typeof MediaVolumeRange>;
+export const VideoPlayerVolumeRange = ({
+  className = "",
+  ...props
+}: VideoPlayerVolumeRangeProps) => (
+  <MediaVolumeRange className={`p-2.5 ${className}`} {...props} />
+);
+
+export type VideoPlayerPlayButtonProps = ComponentProps<typeof MediaPlayButton>;
+export const VideoPlayerPlayButton = ({
+  className = "",
+  ...props
+}: VideoPlayerPlayButtonProps) => (
+  <MediaPlayButton className={className} {...props} />
+);
+
+export type VideoPlayerSeekBackwardButtonProps = ComponentProps<typeof MediaSeekBackwardButton>;
+export const VideoPlayerSeekBackwardButton = ({
+  className = "",
+  ...props
+}: VideoPlayerSeekBackwardButtonProps) => (
+  <MediaSeekBackwardButton className={`p-2.5 ${className}`} {...props} />
+);
+
+export type VideoPlayerSeekForwardButtonProps = ComponentProps<typeof MediaSeekForwardButton>;
+export const VideoPlayerSeekForwardButton = ({
+  className = "",
+  ...props
+}: VideoPlayerSeekForwardButtonProps) => (
+  <MediaSeekForwardButton className={`p-2.5 ${className}`} {...props} />
+);
+
+export type VideoPlayerMuteButtonProps = ComponentProps<typeof MediaMuteButton>;
+export const VideoPlayerMuteButton = ({
+  className = "",
+  ...props
+}: VideoPlayerMuteButtonProps) => (
+  <MediaMuteButton className={className} {...props} />
+);
+
+export type VideoPlayerContentProps = ComponentProps<"video">;
+export const VideoPlayerContent = ({
+  className = "",
+  ...props
+}: VideoPlayerContentProps) => (
+  <video className={`mb-0 mt-0 ${className}`} {...props} />
+);
+
+function VideoPopOver({
+  setShowVideoPopOver,
+}: {
+  setShowVideoPopOver: (show: boolean) => void;
+}) {
+  return (
+    <motion.div
+      layoutId="hero-video-card"
+      transition={{
+        type: "spring",
+        stiffness: 220,
+        damping: 30,
+        mass: 0.8,
+      }}
+      className="absolute inset-x-2 sm:inset-x-5 md:left-1/2 md:-translate-x-1/2 md:w-[calc(100vw-40px)] max-w-none bottom-2 top-[72px] sm:top-[80px] z-30 flex flex-col overflow-hidden rounded-[20px] sm:rounded-[28px] bg-black border-none shadow-none"
+    >
+      <VideoPlayer style={{ width: "100%", height: "100%", position: "relative" }}>
+        {/* Full Video Stream */}
+        <VideoPlayerContent
+          src="/showreel/skiper-ui-showreel.mp4"
+          autoPlay
+          loop
+          playsInline
+          slot="media"
+          className="absolute inset-0 h-full w-full object-cover"
+          style={{ width: "100%", height: "100%" }}
+        />
+
+        {/* Cinematic subtle dark gradient vignette */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.25 }}
+          className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-black/40"
+        />
+
+        {/* Close Button top-right */}
+        <motion.button
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.8 }}
+          transition={{ duration: 0.2 }}
+          type="button"
+          aria-label="Close video"
+          onClick={() => setShowVideoPopOver(false)}
+          className="group absolute right-3 top-3 sm:right-4 sm:top-4 z-40 flex size-8 sm:size-9 cursor-pointer items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-md transition hover:scale-105 hover:bg-black/90"
+        >
+          <Plus className="size-4 sm:size-5 rotate-45 transition-transform duration-200 group-hover:rotate-90" />
+        </motion.button>
+
+        {/* Fabrica Hero typography overlay */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 12 }}
+          transition={{ duration: 0.3, delay: 0.05 }}
+          className="pointer-events-none absolute inset-0 z-20 flex flex-col justify-between p-4 sm:p-6 md:p-10 text-white"
+        >
+          {/* Top row under nav: Massive title on left, service list on right */}
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-6">
+            <div>
+              <div className="flex items-center gap-2 sm:gap-3">
+                <img
+                  src="/OFST-wt-trans.svg"
+                  alt="OFST"
+                  className="h-[clamp(2rem,5.5vw,5.5rem)] w-auto max-w-[240px] sm:max-w-[340px] object-contain drop-shadow-md"
+                />
+                <span className="text-lg sm:text-2xl font-light opacity-80 self-start mt-0.5 sm:mt-1">®</span>
+              </div>
+              <p className="mt-1 sm:mt-2 text-[clamp(1.25rem,3.5vw,3.2rem)] font-normal tracking-[-0.03em] leading-tight text-white/90">
+                Studio
+              </p>
+            </div>
+
+            <div className="hidden md:flex flex-col items-end gap-1.5 text-right text-[13px] font-medium tracking-tight text-white/90 pr-14 leading-normal select-none">
+              <span className="whitespace-nowrap">Branding & Identity</span>
+              <span className="whitespace-nowrap">Web Design & Development</span>
+              <span className="whitespace-nowrap">Mobile App</span>
+            </div>
+          </div>
+
+          {/* Bottom row: Manifesto on left, Team / Contact card & Controls on right */}
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 sm:gap-6 pt-4 sm:pt-8 pb-14 sm:pb-10">
+            <div className="max-w-[340px]">
+              <p className="text-[13px] sm:text-[15px] leading-snug tracking-tight text-white/85 font-light">
+                <strong className="font-semibold text-white">No generic websites. No empty promises.</strong> Just thoughtful design and precision that help your brand resonate and grow.
+              </p>
+              <span className="mt-2 sm:mt-3 block text-[11px] uppercase tracking-wider text-white/40">
+                © {new Date().getFullYear()} OFST® Studio
+              </span>
+            </div>
+
+            {/* Two Connected Standalone Cards matching Reference Image 2 */}
+            <div className="pointer-events-auto hidden lg:flex items-center gap-[0px] shadow-lg transition-transform hover:scale-[1.01]">
+              {/* 1: Standalone Image Card */}
+              <div className="flex h-[130px] w-[105px] shrink-0 items-center justify-center overflow-hidden rounded-[15px] bg-white p-2">
+                <img
+                  src={asset("96930.png")}
+                  alt="Lauren Thompson"
+                  className="h-full w-full rounded-[11px] object-cover object-top"
+                />
+              </div>
+
+              {/* 2: Standalone Text Info & CTA Card */}
+              <div className="flex h-[130px] min-w-[210px] flex-col justify-between rounded-[15px] bg-white px-5 py-3.5 text-black">
+                <div className="text-left">
+                  <span className="block text-[13px] font-semibold text-neutral-800 leading-tight">
+                    Team Lead
+                  </span>
+                  <span className="block text-[12px] text-neutral-500 font-normal leading-tight mt-0.5">
+                    at fabrica®
+                  </span>
+                  <span className="block text-[19px] font-bold text-black tracking-[-0.02em] leading-tight mt-1.5 whitespace-nowrap">
+                    Lauren Thompson
+                  </span>
+                </div>
+
+                <a
+                  href="#contact"
+                  onClick={() => setShowVideoPopOver(false)}
+                  className="inline-flex w-fit items-center gap-2 rounded-full bg-black px-4 py-1.5 text-[12px] font-medium text-white transition hover:bg-neutral-800"
+                >
+                  <span>Let&apos;s talk</span>
+                  <span className="size-1.5 rounded-full bg-white" />
+                </a>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Video Player Control Bar along bottom */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 10 }}
+          transition={{ duration: 0.25, delay: 0.05 }}
+          className="contents"
+        >
+          <VideoPlayerControlBar className="absolute bottom-3 left-1/2 z-30 flex w-[calc(100%-24px)] sm:w-[calc(100%-48px)] max-w-3xl -translate-x-1/2 items-center justify-center gap-2 sm:gap-3 rounded-xl bg-black/60 px-3 py-1.5 backdrop-blur-md text-white sm:px-6">
+            <VideoPlayerPlayButton className="h-5 bg-transparent text-white cursor-pointer hover:opacity-80" />
+            <VideoPlayerTimeRange className="bg-transparent text-white flex-1 cursor-pointer" />
+            <VideoPlayerTimeDisplay className="text-[11px] sm:text-[12px] tabular-nums text-white/80 p-0" />
+            <VideoPlayerMuteButton className="size-5 bg-transparent text-white cursor-pointer hover:opacity-80 ml-1 sm:ml-2" />
+          </VideoPlayerControlBar>
+        </motion.div>
+      </VideoPlayer>
+    </motion.div>
+  );
+}
+
 const projects = [
   { name: "void®", image: "e3bbf.png" },
   { name: "offset studio", image: "cbc79.png" },
@@ -166,34 +486,108 @@ function CornerLabel({ children }: { children: React.ReactNode }) {
 export default function App() {
   const [step, setStep] = useState(0)
   const [project, setProject] = useState<number | null>(null)
+  const [openQuestion, setOpenQuestion] = useState<number | null>(0)
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [subscribed, setSubscribed] = useState(false)
+  const [showVideoPopOver, setShowVideoPopOver] = useState(false)
+  const videoSpring = { mass: 0.1 }
+  const videoX = useSpring(0, videoSpring)
+  const videoY = useSpring(0, videoSpring)
+  const videoPlayOpacity = useSpring(0, videoSpring)
+
+  const handleVideoPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    videoPlayOpacity.set(1)
+    const bounds = e.currentTarget.getBoundingClientRect()
+    videoX.set(e.clientX - bounds.left)
+    videoY.set(e.clientY - bounds.top)
+  }
   const [contactStatus, setContactStatus] = useState("")
+  const heroRef = useRef<HTMLElement | null>(null)
+  const heroFadeRef = useRef<HTMLDivElement | null>(null)
   const lenisRef = useRef<Lenis | null>(null)
+  const [lenisInstance, setLenisInstance] = useState<Lenis | null>(null)
 
+  useEffect(() => {
+    let ticking = false
+    const updateHeroFade = () => {
+      const hero = heroRef.current
+      const fade = heroFadeRef.current
+      if (!hero || !fade) return
 
+      const rect = hero.getBoundingClientRect()
+      const windowHeight = window.innerHeight
+
+      if (rect.bottom <= 0 || rect.top >= windowHeight) {
+        fade.style.opacity = "0"
+        ticking = false
+        return
+      }
+
+      if (rect.bottom < windowHeight) {
+        const progress = Math.max(0, Math.min(1, (rect.bottom - (windowHeight - 120)) / 120))
+        fade.style.opacity = String(progress)
+      } else {
+        fade.style.opacity = "1"
+      }
+      ticking = false
+    }
+
+    const onScroll = () => {
+      if (!ticking) {
+        ticking = true
+        requestAnimationFrame(updateHeroFade)
+      }
+    }
+
+    updateHeroFade()
+    window.addEventListener("scroll", onScroll, { passive: true })
+    window.addEventListener("resize", onScroll)
+    return () => {
+      window.removeEventListener("scroll", onScroll)
+      window.removeEventListener("resize", onScroll)
+    }
+  }, [])
 
   useEffect(() => {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)")
+    let rafId: number
+
     const updateScrolling = () => {
       lenisRef.current?.destroy()
       lenisRef.current = null
+      setLenisInstance(null)
+      cancelAnimationFrame(rafId)
+
       if (reducedMotion.matches) return
+
       const lenis = new Lenis({
-        autoRaf: true,
-        anchors: true,
-        duration: 1.1,
+        duration: 1.2,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
         smoothWheel: true,
+        wheelMultiplier: 1,
+        touchMultiplier: 1.5,
         prevent: (element) => Boolean(element.closest('[role="dialog"]')),
       })
+
+      const raf = (time: number) => {
+        lenis.raf(time)
+        rafId = requestAnimationFrame(raf)
+      }
+      rafId = requestAnimationFrame(raf)
+
       lenisRef.current = lenis
+      setLenisInstance(lenis)
       if (document.body.style.overflow === "hidden") lenis.stop()
     }
+
     updateScrolling()
     reducedMotion.addEventListener("change", updateScrolling)
     return () => {
+      cancelAnimationFrame(rafId)
       reducedMotion.removeEventListener("change", updateScrolling)
       lenisRef.current?.destroy()
       lenisRef.current = null
+      setLenisInstance(null)
     }
   }, [])
 
@@ -224,14 +618,15 @@ export default function App() {
   }, [project])
 
   return (
-    <div id="home" className="min-h-screen bg-[var(--bg)] text-[var(--fg)] transition-colors duration-300">
-      <main className="mx-auto w-full max-w-[1560px] px-5 md:px-10">
-        <section className="relative flex aspect-[1520/991] min-h-[580px] items-center justify-center overflow-hidden md:min-h-0">
-          <img
-            src={asset("a623b.png")}
-            alt="A monochrome studio identity card suspended from a silver lanyard"
-            className="absolute inset-0 h-full w-full object-contain max-md:object-cover"
-          />
+    <div id="home" className="min-h-screen w-full max-w-full overflow-x-hidden bg-[var(--bg)] text-[var(--fg)] transition-colors duration-300">
+      <main className="mx-auto w-full max-w-[1560px] px-4 sm:px-5 md:px-10">
+        {/* Hero Section with Parallax Effect */}
+        <section
+          id="hero"
+          ref={heroRef}
+          className="relative w-full"
+        >
+          {/* Main Navigation */}
           <nav
             aria-label="Main navigation"
             ref={(navigation) => {
@@ -239,27 +634,15 @@ export default function App() {
               const hero = navigation.parentElement;
               if (!hero) return;
               const updateCompact = () => {
-                navigation.dataset.compact = String(hero.getBoundingClientRect().bottom <= 0);
+                navigation.dataset.compact = String(hero.getBoundingClientRect().bottom <= 80);
               };
               updateCompact();
-              const observer = new IntersectionObserver(updateCompact, { threshold: 0 });
-              observer.observe(hero);
-              const clock = navigation.querySelector("time");
-              const updateClock = () => {
-                if (clock) {
-                  const now = new Date();
-                  clock.dateTime = now.toISOString();
-                  clock.textContent = now.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
-                }
-              };
-              updateClock();
-              const timer = window.setInterval(updateClock, 1000);
+              window.addEventListener("scroll", updateCompact, { passive: true });
               return () => {
-                observer.disconnect();
-                window.clearInterval(timer);
+                window.removeEventListener("scroll", updateCompact);
               };
             }}
-            className="group fixed left-1/2 top-5 z-40 flex h-[40.91px] min-h-[40.91px] w-[min(calc(100%-40px),915px)] -translate-x-1/2 items-center justify-between gap-2 rounded-[10px] bg-[#f2f2f2]/95 px-[10px] text-[15px] text-[#030303] backdrop-blur-xl transition-[width,background-color,color] duration-300 motion-reduce:transition-none data-[compact=true]:w-[217px] data-[compact=true]:bg-[#030303] data-[compact=true]:text-white dark:data-[compact=true]:bg-white dark:data-[compact=true]:text-[#030303]"
+            className="group fixed left-1/2 top-4 sm:top-5 z-40 flex h-[40px] min-h-[40px] w-[min(calc(100%-32px),540px)] -translate-x-1/2 items-center justify-between gap-1.5 sm:gap-2 rounded-[10px] bg-[#f2f2f2]/95 px-2.5 sm:px-3 text-[15px] text-[#030303] backdrop-blur-xl transition-[width,background-color,color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none data-[compact=true]:w-[217px] data-[compact=true]:bg-[#030303] data-[compact=true]:text-white dark:data-[compact=true]:bg-white dark:data-[compact=true]:text-[#030303]"
           >
             <a href="#home" aria-label="OFST" className="flex shrink-0 items-center gap-[7px]">
               <img
@@ -267,51 +650,18 @@ export default function App() {
                 className="size-5 shrink-0 object-contain group-data-[compact=true]:invert dark:group-data-[compact=true]:invert-0"
                 alt=""
               />
-              {/* In light mode: full navbar shows blk logo; compact mode hides blk logo and shows wt logo */}
-              {/* In dark mode: full navbar shows blk logo; compact mode shows blk logo on white background */}
               <img
                 src="/OFST-blk-trans.svg"
                 alt="OFST"
-                className="block h-[20px] w-auto shrink-0 group-data-[compact=true]:hidden dark:group-data-[compact=true]:block"
+                className="block h-[18px] sm:h-[20px] w-auto shrink-0 group-data-[compact=true]:hidden dark:group-data-[compact=true]:block"
               />
               <img
                 src="/OFST-wt-trans.svg"
                 alt="OFST"
-                className="hidden h-[20px] w-auto shrink-0 group-data-[compact=true]:block dark:group-data-[compact=true]:hidden"
+                className="hidden h-[18px] sm:h-[20px] w-auto shrink-0 group-data-[compact=true]:block dark:group-data-[compact=true]:hidden"
               />
             </a>
-            <div className="flex shrink-0 items-center gap-4">
-              <div className="hidden shrink-0 items-center gap-1 group-data-[compact=true]:hidden lg:flex">
-                <div className="hidden h-7 w-[260px] items-center overflow-hidden rounded-[10px] bg-white px-2.5 text-[14px] xl:flex">
-                  <div className="w-full overflow-hidden [mask-image:linear-gradient(to_right,transparent_0%,black_14%,black_86%,transparent_100%)]">
-                    <div className="animate-marquee whitespace-nowrap">
-                      <span className="flex items-center gap-2 pr-2">
-                        <span className="text-[#999]">design is a conversation.</span>
-                        <span className="text-[#999]">/</span>
-                        <span className="text-black">let's talk.</span>
-                        <span className="text-[#999]">/</span>
-                      </span>
-                      <span className="flex items-center gap-2 pr-2" aria-hidden="true">
-                        <span className="text-[#999]">design is a conversation.</span>
-                        <span className="text-[#999]">/</span>
-                        <span className="text-black">let's talk.</span>
-                        <span className="text-[#999]">/</span>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                <span aria-hidden="true" className="hidden h-7 w-[5px] rounded-[10px] bg-[#d6d6d6] xl:block" />
-                <span className="flex h-7 shrink-0 items-center gap-[5px] rounded-[10px] bg-white px-[10px] text-[14px] text-black">
-                  <time>
-                  {new Date().toLocaleTimeString("en-US", {
-                    hour: "numeric",
-                    minute: "2-digit",
-                  })}
-                  </time>
-                  <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="9" /><path d="M12 7v5h4" /></svg>
-                </span>
-              </div>
-              <div className="flex shrink-0 items-center gap-3 md:gap-4">
+            <div className="flex h-full shrink-0 items-center gap-2 sm:gap-3 md:gap-4">
                 {["About", "Projects", "Services", "Process", "Contact"].map(
                   (label) => (
                     <a
@@ -319,41 +669,29 @@ export default function App() {
                       href={`#${label.toLowerCase()}`}
                       className={
                         label === "Contact"
-                          ? "inline-flex h-[30px] items-center justify-center rounded-[5px] px-3 text-center text-[#030303] transition-colors hover:bg-[#d6d6d6] hover:text-black group-data-[compact=true]:min-w-[81px] group-data-[compact=true]:bg-[#f2f2f2] group-data-[compact=true]:text-[#030303] dark:group-data-[compact=true]:bg-[#030303] dark:group-data-[compact=true]:text-white max-[450px]:text-[12px]"
-                          : "text-[#030303] transition-opacity hover:opacity-50 group-data-[compact=true]:hidden max-[450px]:text-[12px]"
+                          ? "order-2 sm:order-none inline-flex h-[30px] items-center justify-center rounded-[5px] bg-[#d6d6d6]/60 px-2.5 sm:px-3 text-center text-[#030303] text-[13px] sm:text-[14px] leading-none transition-colors hover:bg-[#d6d6d6] hover:text-black group-data-[compact=true]:min-w-[81px] group-data-[compact=true]:h-[30px] group-data-[compact=true]:bg-[#f2f2f2] group-data-[compact=true]:text-[#030303]"
+                          : "text-[#030303] text-[13px] sm:text-[15px] transition-opacity hover:opacity-50 group-data-[compact=true]:hidden hidden sm:inline"
                       }
                     >
                       {label}
                     </a>
                   ),
                 )}
+                <div className="order-1 sm:order-none shrink-0 flex items-center group-data-[compact=true]:hidden">
+                  <ThemeToggleButton
+                    variant="circle"
+                    start="top-right"
+                    blur={false}
+                  />
+                </div>
               </div>
-            </div>
           </nav>
-          <div className="pointer-events-none relative flex flex-col items-center text-center text-white">
-            <h1 className="flex justify-center">
-              <img
-                src="/OFST-wt-trans.svg"
-                alt="OFST"
-                className="h-[46px] w-auto max-w-[220px]"
-              />
-            </h1>
-            <p className="mt-2 text-[16px] tracking-[-0.48px]">
-              less but more.
-            </p>
-          </div>
 
-          {/* Theme toggle in right corner of Hero section */}
-          <div className="absolute right-5 top-5 z-40 flex items-center">
-            <ThemeToggleButton
-              variant="circle"
-              start="top-right"
-              blur={false}
-            />
-          </div>
+          {/* Hero Parallax Scroll Gallery */}
+          <Skiper30 lenis={lenisInstance} />
         </section>
 
-        <div className="grid grid-cols-4 items-center gap-3 rounded-[10px] bg-[#f2f2f2] px-5 py-6">
+        <div className="relative z-30 -mt-6 sm:-mt-10 md:-mt-12 grid grid-cols-4 items-center gap-3 rounded-[10px] bg-[#f2f2f2] px-5 py-6">
           {["ad99d.svg", "f0c0b.svg", "01080.svg", "4344b.svg"].map((image) => (
             <div key={image} className="flex justify-center overflow-hidden">
               <img
@@ -424,7 +762,7 @@ export default function App() {
             <RevealLine delay={0.15} className="md:block md:text-left md:text-[min(40px,3.75cqw)] md:whitespace-nowrap">resonate with clarity and intention. Every project is a story; here's</RevealLine>{" "}
             <RevealLine delay={0.25} className="md:block md:text-left md:text-[min(40px,3.75cqw)]">what ours says..</RevealLine>
           </p>
-          <div className="grid grid-cols-3 gap-5 py-20 md:py-28">
+          <div className="grid grid-cols-3 gap-5 py-20 md:py-28 -translate-x-[7px]">
             {[
               { val: 8, suffix: "+", label: "Crafting Experiences" },
               { val: 50, suffix: "+", label: "Projects Delivered" },
@@ -626,20 +964,22 @@ export default function App() {
             ].map(([name, title, quote, image]) => (
               <figure key={name} className="flex flex-col gap-[9px]">
                 <figcaption
-                  className={`flex min-h-[64px] items-center gap-[10px] rounded-[5px] bg-[#f2f2f2] p-3 text-[#030303] ${
-                    name === "Amira Solis" ? "order-2" : ""
+                  className={`flex h-[64px] min-h-[64px] max-h-[64px] items-center gap-[14px] overflow-hidden rounded-[5px] bg-[#f2f2f2] p-0 text-[#030303] ${
+                    name === "Amira Solis" ? "md:order-2" : ""
                   }`}
                 >
-                  <img
-                    src={asset(image)}
-                    alt={name}
-                    className="h-10 w-[51px] rounded-[5px] object-cover"
-                  />
-                  <div>
+                  <div className="h-[64px] w-[64px] shrink-0 overflow-hidden rounded-[5px] bg-neutral-300">
+                    <img
+                      src={asset(image)}
+                      alt={name}
+                      className="h-full w-full object-cover object-center"
+                    />
+                  </div>
+                  <div className="flex flex-col justify-center py-2 pr-3">
                     <p className="text-[16px] leading-[19.2px] tracking-[-0.48px] text-[#030303]">
                       {name}
                     </p>
-                    <p className="mt-[5px] text-[12px] leading-[14.4px] tracking-[-0.24px] text-[#696969]">
+                    <p className="mt-[3px] text-[12px] leading-[14.4px] tracking-[-0.24px] text-[#696969]">
                       {title}
                     </p>
                   </div>
@@ -689,16 +1029,16 @@ export default function App() {
                   ))}
                 </div>
               </div>
-              <div className="col-span-2 flex aspect-[888/530] min-h-[400px] flex-col items-center justify-center gap-9 rounded-[10px] bg-[#f2f2f2] p-6 text-[#030303] md:min-h-0 md:gap-[clamp(20px,3vw,45px)]">
-                <h3 className="text-center text-[32px] leading-[41.6px] tracking-[-0.96px] text-[#030303]">
+              <div className="col-span-2 flex aspect-auto sm:aspect-[888/530] min-h-0 w-full max-w-full flex-col items-center justify-center gap-6 sm:gap-9 rounded-[10px] bg-[#f2f2f2] p-4 sm:p-6 text-[#030303] md:gap-[clamp(20px,3vw,45px)] overflow-hidden">
+                <h3 className="text-center text-[24px] sm:text-[32px] leading-tight sm:leading-[41.6px] tracking-[-0.96px] text-[#030303]">
                   <RevealLine className="block text-[#030303]">Engagement</RevealLine>
                   <RevealLine delay={0.1} className="block text-[#696969]">Over Time</RevealLine>
                 </h3>
-                <div className="w-full max-w-[315px]">
+                <div className="w-full max-w-[315px] px-2 sm:px-0">
                   <div
                     role="img"
                     aria-label="Engagement rises steadily from February to June"
-                    className="flex h-[155px] items-end justify-between gap-1"
+                    className="flex h-[110px] sm:h-[155px] items-end justify-between gap-[2px] sm:gap-1"
                   >
                     {[
                       "h-[12%]",
@@ -795,24 +1135,50 @@ export default function App() {
               <RevealLine delay={0.1} className="block text-[#696969]">Straight Answers.</RevealLine>
             </h2>
           <div>
-            {questions.map(([question, answer]) => (
-              <details
-                key={question}
-                className="group border-b border-[#f2f2f2] py-[19px]"
-              >
-                <summary className="flex cursor-pointer list-none items-center justify-between gap-5 text-[16px] tracking-[-0.48px]">
-                  {question}
-                  <img
-                    src={asset("888bd.svg")}
-                    alt=""
-                    className="transition-transform group-open:rotate-45"
-                  />
-                </summary>
-                <p className="max-w-[540px] pt-5 text-[14px] leading-6 text-[#696969]">
-                  {answer}
-                </p>
-              </details>
-            ))}
+            {questions.map(([question, answer], index) => {
+              const isOpen = openQuestion === index
+              return (
+                <div
+                  key={question}
+                  className="border-b border-[#f2f2f2] py-[19px]"
+                >
+                  <button
+                    type="button"
+                    onClick={() => setOpenQuestion(isOpen ? null : index)}
+                    aria-expanded={isOpen}
+                    className="flex w-full cursor-pointer list-none items-center justify-between gap-5 text-left text-[16px] tracking-[-0.48px] text-[#030303] dark:text-white"
+                  >
+                    <span>{question}</span>
+                    <motion.img
+                      src={asset("888bd.svg")}
+                      alt=""
+                      animate={{ rotate: isOpen ? 45 : 0 }}
+                      transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                      className="shrink-0 transition-transform"
+                    />
+                  </button>
+                  <AnimatePresence initial={false}>
+                    {isOpen && (
+                      <motion.div
+                        key="content"
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{
+                          height: { duration: 0.4, ease: [0.16, 1, 0.3, 1] },
+                          opacity: { duration: 0.25, ease: "easeInOut" },
+                        }}
+                        className="overflow-hidden"
+                      >
+                        <p className="max-w-[540px] pt-4 text-[14px] leading-6 text-[#696969] dark:text-[#a1a1aa]">
+                          {answer}
+                        </p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              )
+            })}
           </div>
           <div className="flex flex-col items-center text-center md:-translate-y-1">
             <p className="text-[40px] leading-[46.4px] tracking-[-2px]">
@@ -970,18 +1336,24 @@ export default function App() {
             className="hidden aspect-[283/258] rounded-[10px] object-cover md:block"
           />
         </div>
-        <div className="mb-8 flex h-10 items-center justify-center overflow-hidden rounded-[10px] bg-white text-[14px] leading-[18.4px] tracking-[-0.42px] text-[#030303]">
-          <div className="flex shrink-0 items-center gap-3 whitespace-nowrap">
-            {[0, 1, 2].map((index) => (
-              <div key={index} aria-hidden={index !== 1 ? true : undefined} className="flex items-center gap-3">
-                <span>We craft digital spaces where contrast creates conversation.</span>
-                <span aria-hidden="true" className="h-7 w-[5px] rounded-full bg-[#d6d6d6]" />
-                <span>Our work exists in the tension between simplicity and statement.</span>
-                <span aria-hidden="true" className="h-7 w-[5px] rounded-full bg-[#d6d6d6]" />
+        <div className="mb-8 flex h-10 items-center overflow-hidden rounded-[10px] bg-white text-[14px] leading-[18.4px] tracking-[-0.42px] text-[#030303]">
+          <div className="w-full overflow-hidden [mask-image:linear-gradient(to_right,transparent_0%,black_10%,black_90%,transparent_100%)]">
+            <div className="flex animate-marquee shrink-0 items-center whitespace-nowrap">
+            {[0, 1].map((copyIndex) => (
+              <div key={copyIndex} aria-hidden={copyIndex === 1 ? true : undefined} className="flex shrink-0 items-center">
+                {[0, 1, 2].map((i) => (
+                  <div key={i} className="flex shrink-0 items-center gap-3 pr-3">
+                    <span>We craft digital spaces where contrast creates conversation.</span>
+                    <span aria-hidden="true" className="h-7 w-[5px] rounded-full bg-[#d6d6d6]" />
+                    <span>Our work exists in the tension between simplicity and statement.</span>
+                    <span aria-hidden="true" className="h-7 w-[5px] rounded-full bg-[#d6d6d6]" />
+                  </div>
+                ))}
               </div>
             ))}
           </div>
         </div>
+      </div>
         <div className="flex w-full justify-center py-[5%]">
           <img
             src="/OFST-wt-trans.svg"
@@ -991,8 +1363,8 @@ export default function App() {
         </div>
         <div className="grid gap-2 md:grid-cols-2">
           {[
-            ["Home", "About", "Projects", "Contact"],
-            ["X.com", "LinkedIn", "YouTube", "layers"],
+            ["Home", "About", "Work", "Services"],
+            ["Process", "Contact", "Privacy", "Terms"],
           ].map((links, index) => (
             <div
               key={index}
@@ -1001,39 +1373,45 @@ export default function App() {
               {links.map((label) => (
                 <a
                   key={label}
-                  href={
-                    index === 0
-                      ? `#${label.toLowerCase()}`
-                      : {
-                          "X.com": "https://x.com",
-                          LinkedIn: "https://linkedin.com",
-                          YouTube: "https://youtube.com",
-                          layers: "https://layers.to",
-                        }[label]
-                  }
-                  target={index === 1 ? "_blank" : undefined}
-                  rel={index === 1 ? "noreferrer" : undefined}
-                  className="flex min-h-[35px] items-center justify-between gap-3 rounded-[10px] bg-[#f2f2f2] px-2 py-[7px] text-[16px] leading-[19px] tracking-[-0.48px] transition-colors hover:bg-[#e6e6e6]"
+                  href={`#${label.toLowerCase()}`}
+                  className="group flex min-h-[35px] items-center justify-between gap-3 rounded-[10px] bg-[#f2f2f2] px-2 py-[7px] text-[16px] leading-[19px] tracking-[-0.48px] transition-colors hover:bg-[#e6e6e6]"
                 >
                   {label}
-                  <span aria-hidden="true" className="flex h-[19px] w-[34px] shrink-0 items-center justify-center rounded-full border border-[#030303]">
-                    <img src={asset("a86b1.svg")} alt="" />
+                  <span aria-hidden="true" className="flex h-[19px] w-[34px] shrink-0 items-center justify-center rounded-full border border-[#030303] transition-transform group-hover:scale-105">
+                    <svg
+                      width="10.5"
+                      height="10.5"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="size-3 text-[#030303]"
+                    >
+                      <line x1="7" y1="17" x2="17" y2="7" />
+                      <polyline points="7 7 17 7 17 17" />
+                    </svg>
                   </span>
                 </a>
               ))}
             </div>
           ))}
         </div>
-        <div className="mt-7 flex flex-wrap justify-between gap-4 text-[12px]">
-          <p>OFST® 2026. All rights reserved</p>
-          <p>Made in Framer By Danny</p>
-          <a href="#home" className="hover:underline">
+        <div className="relative mt-7 flex flex-col gap-2 text-[12px] sm:grid sm:grid-cols-3 sm:items-center">
+          <p className="order-2 text-center sm:order-1 sm:text-left">OFST® 2026. All rights reserved</p>
+          <p className="order-3 hidden text-center text-[#888] sm:order-2 sm:block">Independent by Design</p>
+          <a href="#home" className="order-1 text-right hover:underline sm:order-3 sm:text-right">
             Back to top ↑
           </a>
         </div>
       </footer>
 
-      {/* Viewport bottom blur bar */}
+      {/* Hero section bottom fade overlay */}
+      <div ref={heroFadeRef} aria-hidden="true" className="hero-bottom-fade" />
+
+      {/* Viewport top & bottom blur bars */}
+      <div aria-hidden="true" className="top-blur-gradient" />
       <div aria-hidden="true" className="bottom-blur-gradient" />
 
       {project !== null && (

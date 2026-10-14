@@ -643,9 +643,7 @@ export const ThemeToggleButton = ({
   return (
     <button
       type="button"
-      className={`h-[40.91px] w-[40.91px] cursor-pointer rounded-[10px] p-2.5 transition-all duration-300 active:scale-95 flex items-center justify-center border-0 shadow-none ${
-        isDark ? "bg-white text-black" : "bg-[#f2f2f2] text-black"
-      } ${className}`}
+      className={`size-8 cursor-pointer bg-transparent p-1 transition-all duration-300 active:scale-95 flex items-center justify-center border-0 shadow-none text-current hover:opacity-70 ${className}`}
       onClick={toggleTheme}
       aria-label="Toggle theme"
     >
