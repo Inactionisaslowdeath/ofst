@@ -6,19 +6,23 @@ describe("ContactSection", () => {
   it("renders form inputs with required validation and submit button", () => {
     render(<ContactSection lenis={null} />)
 
-    expect(screen.getByText(/refine your vision/i)).toBeDefined()
-    expect(screen.getByPlaceholderText(/rayan solis/i)).toBeDefined()
-    expect(screen.getByPlaceholderText(/hello@gmail\.com/i)).toBeDefined()
-    expect(screen.getByPlaceholderText(/your message/i)).toBeDefined()
+    expect(screen.getByText(/let's build with intent/i)).toBeDefined()
+    expect(screen.getByPlaceholderText(/your name/i)).toBeDefined()
+    expect(screen.getByPlaceholderText(/you@company\.com/i)).toBeDefined()
+    expect(
+      screen.getByPlaceholderText(/tell us what you are building/i),
+    ).toBeDefined()
     expect(screen.getByRole("button", { name: /submit/i })).toBeDefined()
   })
 
   it("submits the form and displays confirmation status message", () => {
     render(<ContactSection lenis={null} />)
 
-    const nameInput = screen.getByPlaceholderText(/rayan solis/i)
-    const emailInput = screen.getByPlaceholderText(/hello@gmail\.com/i)
-    const messageInput = screen.getByPlaceholderText(/your message/i)
+    const nameInput = screen.getByPlaceholderText(/your name/i)
+    const emailInput = screen.getByPlaceholderText(/you@company\.com/i)
+    const messageInput = screen.getByPlaceholderText(
+      /tell us what you are building/i,
+    )
     const submitBtn = screen.getByRole("button", { name: /submit/i })
 
     fireEvent.change(nameInput, { target: { value: "Rayan Solis" } })

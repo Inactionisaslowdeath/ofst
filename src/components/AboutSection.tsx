@@ -25,20 +25,20 @@ export function AboutSection() {
           delay={0.05}
           className="md:block md:text-right md:text-[min(40px,3.75cqw)] md:whitespace-nowrap"
         >
-          <span className="text-[#696969]">At OFST</span> we embrace the tension
-          between minimalism and
+          <span className="text-[#696969]">At OFST,</span> we bring strategy,
+          design, and technology together
         </RevealLine>{" "}
         <RevealLine
           delay={0.15}
           className="md:block md:text-left md:text-[min(40px,3.75cqw)] md:whitespace-nowrap"
         >
-          impact. We believe that powerful design doesn't need to shout, it
+          to make digital experiences clear, distinctive, and useful. We
         </RevealLine>{" "}
         <RevealLine
           delay={0.25}
           className="md:block md:text-left md:text-[min(40px,3.75cqw)]"
         >
-          needs to resonate.
+          believe the best work makes every detail count.
         </RevealLine>
       </p>
     </section>

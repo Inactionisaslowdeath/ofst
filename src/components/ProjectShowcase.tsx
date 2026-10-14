@@ -35,9 +35,9 @@ export function ProjectShowcase({
   return (
     <section id="projects" className="scroll-mt-20 pt-10">
       <h2 className="mb-5 text-[40px] leading-[46.4px] tracking-[-2px]">
-        <RevealLine className="block">Proof of Less</RevealLine>
+        <RevealLine className="block">Selected Work</RevealLine>
         <RevealLine delay={0.1} className="block text-[#696969]">
-          But More.
+          Made with Intent.
         </RevealLine>
       </h2>
 
@@ -83,19 +83,19 @@ export function ProjectShowcase({
           delay={0.05}
           className="md:block md:text-right md:text-[min(40px,3.75cqw)] md:whitespace-nowrap"
         >
-          We craft minimalistic, purposeful digital experiences that
+          We build distinctive brands and digital experiences around
         </RevealLine>{" "}
         <RevealLine
           delay={0.15}
           className="md:block md:text-left md:text-[min(40px,3.75cqw)] md:whitespace-nowrap"
         >
-          resonate with clarity and intention. Every project is a story; here's
+          a clear idea and a real purpose. Explore a selection of concepts
         </RevealLine>{" "}
         <RevealLine
           delay={0.25}
           className="md:block md:text-left md:text-[min(40px,3.75cqw)]"
         >
-          what ours says..
+          and design explorations from the OFST studio.
         </RevealLine>
       </p>
 

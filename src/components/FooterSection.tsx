@@ -160,16 +160,15 @@ export function FooterSection({ lenis }: FooterSectionProps) {
                       className="flex shrink-0 items-center gap-3 pr-3"
                     >
                       <span>
-                        We craft digital spaces where contrast creates
-                        conversation.
+                        We build digital experiences with clarity and intent.
                       </span>
                       <span
                         aria-hidden="true"
                         className="h-7 w-[5px] rounded-full bg-[#d6d6d6]"
                       />
                       <span>
-                        Our work exists in the tension between simplicity and
-                        statement.
+                        Our work exists in between Strategy, design, and
+                        development working as one.
                       </span>
                       <span
                         aria-hidden="true"

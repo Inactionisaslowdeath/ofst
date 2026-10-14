@@ -82,17 +82,14 @@ export function ContactSection({ lenis }: ContactSectionProps) {
       />
       <div className="relative mx-auto max-w-[500px] text-center">
         <h2 className="text-[32px] leading-[41.6px] tracking-[-0.96px]">
-          <RevealLine>Refine Your Vision</RevealLine>
+          <RevealLine>Let's build with intent.</RevealLine>
         </h2>
         <p className="mt-3 text-[16px] leading-[18.4px] tracking-[-0.48px]">
           <RevealLine delay={0.05} className="block">
-            Wherever you are.
+            Tell us what you want to make better.
           </RevealLine>
           <RevealLine delay={0.15} className="block">
-            Today, tomorrow—whenever.
-          </RevealLine>
-          <RevealLine delay={0.25} className="block">
-            Reach Out.
+            We’ll start with a thoughtful conversation.
           </RevealLine>
         </p>
         <form
@@ -115,7 +112,7 @@ export function ContactSection({ lenis }: ContactSectionProps) {
             <input
               required
               name="name"
-              placeholder="Rayan Solis"
+              placeholder="Your name"
               className="mt-2 h-10 w-full rounded-[10px] bg-[#f2f2f2] px-3 text-[14px] text-[#030303] placeholder:text-[#888888] outline-offset-4"
             />
           </label>
@@ -125,7 +122,7 @@ export function ContactSection({ lenis }: ContactSectionProps) {
               required
               name="email"
               type="email"
-              placeholder="Hello@gmail.com"
+              placeholder="you@company.com"
               className="mt-2 h-10 w-full rounded-[10px] bg-[#f2f2f2] px-3 text-[14px] text-[#030303] placeholder:text-[#888888] outline-offset-4"
             />
           </label>
@@ -134,7 +131,7 @@ export function ContactSection({ lenis }: ContactSectionProps) {
             <textarea
               required
               name="message"
-              placeholder="Your message"
+              placeholder="Tell us what you are building, what is not working yet, and what you would like to achieve."
               rows={5}
               className="mt-2 w-full resize-y rounded-[10px] bg-[#f2f2f2] p-3 text-[14px] text-[#030303] placeholder:text-[#888888] outline-offset-4"
             />

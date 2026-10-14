@@ -42,8 +42,8 @@ export function TestimonialsSection() {
             )
           })}
         </div>
-        <h2 className="absolute inset-x-0 top-[87%] text-center text-[clamp(14px,4vw,40px)] leading-[1.16] tracking-[-0.05em]">
-          <RevealLine delay={0.28}>Less Fluff, Real Words.</RevealLine>
+        <h2 className="absolute inset-x-0 top-[87%] text-center text-[clamp(20px,4vw,40px)] leading-[1.16] tracking-[-0.04em] font-medium sm:font-normal">
+          <RevealLine delay={0.28}>Good work. Clear thinking.</RevealLine>
         </h2>
       </div>
       <div className="mx-auto grid max-w-[920px] gap-[10px] md:grid-cols-3">

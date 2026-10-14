@@ -69,29 +69,29 @@ export const PROCESS_STEPS: ProcessStep[] = [
 
 export const FAQ_QUESTIONS: FaqQuestion[] = [
   {
-    question: "Why ‘Less But More’?",
+    question: "What does OFST do?",
     answer:
-      "Because powerful design doesn't need to shout, it needs to resonate. We remove the noise so the essential can speak.",
+      "OFST is an independent digital design and development studio working across brand identity, websites, digital products, UX/UI, and mobile apps. Strategy, design, and implementation are considered together so the final experience feels coherent.",
   },
   {
-    question: "What kind of projects do you take on?",
+    question: "Who do you work with?",
     answer:
-      "We work across brand identity, websites, digital products, and editorial design. Each project starts with your vision.",
+      "We work with ambitious founders and businesses looking to make their brand or digital experience more distinctive, useful, and aligned with where they are going. Every inquiry is considered individually to establish fit.",
   },
   {
-    question: "How long does a typical project take?",
+    question: "What happens after I get in touch?",
     answer:
-      "Timelines depend on the scope. We agree on a clear schedule together before the project begins.",
+      "We begin with a conversation about your goals, audience, constraints, and timing. If the project is a fit, we outline the recommended approach, deliverables, milestones, and commercial terms before work begins.",
   },
   {
-    question: "What's your process like?",
+    question: "How long does a project take and what does it cost?",
     answer:
-      "Listen, explore, refine, build, and reflect. A collaborative process, with clarity at every step.",
+      "Both depend on the scope, complexity, and timeline. After we understand the brief, we propose a tailored scope, schedule, and estimate rather than promise a one-size-fits-all package.",
   },
   {
-    question: "Do you offer ongoing support?",
+    question: "Does OFST work with clients internationally?",
     answer:
-      "Yes. We can continue supporting and refining your brand and digital experiences after launch.",
+      "Yes. We work with local and international clients, agreeing on communication, feedback, meeting times, and handoff expectations at the start so collaboration stays clear across time zones.",
   },
 ]
 

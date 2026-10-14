@@ -12,7 +12,9 @@ export function RevealLine({
   className = "",
   delay = 0,
 }: RevealProps) {
-  const isBlock = className.includes("block")
+  // Check if "block" is specified directly without responsive prefix
+  const hasBlock = /(^|\s)block(\s|$)/.test(className)
+  const defaultDisplay = hasBlock ? "block" : "inline"
   return (
     <motion.span
       initial={{ opacity: 0, y: 28, filter: "blur(10px)" }}
@@ -23,9 +25,7 @@ export function RevealLine({
         delay,
         ease: [0.16, 1, 0.3, 1],
       }}
-      className={`${
-        isBlock ? "reveal-line-block block" : "inline-block"
-      } ${className}`}
+      className={`${defaultDisplay} ${className}`}
     >
       {children}
     </motion.span>

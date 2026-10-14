@@ -12,9 +12,9 @@ export function FaqSection() {
       className="grid gap-x-12 gap-y-[60px] py-14 md:grid-cols-2 md:py-16"
     >
       <h2 className="text-[40px] leading-[46.4px] tracking-[-2px] md:col-span-2">
-        <RevealLine className="block">Questions..</RevealLine>
+        <RevealLine className="block">Questions</RevealLine>
         <RevealLine delay={0.1} className="block text-[#696969]">
-          Straight Answers.
+          Clear Answers.
         </RevealLine>
       </h2>
       <div>
@@ -57,9 +57,12 @@ export function FaqSection() {
       </div>
       <div className="flex flex-col items-center text-center md:-translate-y-1">
         <p className="text-[40px] leading-[46.4px] tracking-[-2px]">
-          <RevealLine className="block">For any Questions,</RevealLine>
+          <RevealLine className="block">
+            <span className="max-md:block">Have a project </span>
+            <span className="max-md:block">in mind?</span>
+          </RevealLine>
           <RevealLine delay={0.1} className="block">
-            Reach us
+            Tell us about it.
           </RevealLine>
         </p>
         <a

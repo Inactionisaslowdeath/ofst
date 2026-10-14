@@ -26,7 +26,7 @@ describe("ProjectShowcase", () => {
       />,
     )
 
-    expect(screen.getByText(/proof of less/i)).toBeDefined()
+    expect(screen.getByText(/selected work/i)).toBeDefined()
     expect(
       screen.getByRole("button", { name: /alpha project cover/i }),
     ).toBeDefined()
