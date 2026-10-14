@@ -39,3 +39,27 @@ This project uses **Tailwind CSS v4** through the `@tailwindcss/vite` plugin con
 - Use double quotes for strings containing apostrophes (`"We're here to help"`), or escape them in single-quoted strings. An unescaped apostrophe in a single-quoted string breaks the build.
 - Ensure JSX tags are closed and braces are balanced.
 - Export components as default exports.
+
+## Agent skills
+
+### Issue tracker
+
+GitHub issues via `gh` CLI. See [issue-tracker.md](file:///c:/Users/user/Desktop/OFST/docs/agents/issue-tracker.md).
+
+### Triage labels
+
+Canonical roles: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`. See [triage-labels.md](file:///c:/Users/user/Desktop/OFST/docs/agents/triage-labels.md).
+
+### Domain docs
+
+Single-context (`GLOSSARY.md` + `docs/adr/` at repo root). See [domain.md](file:///c:/Users/user/Desktop/OFST/docs/agents/domain.md).
+
+### Engineering and Workflow Skills
+
+Workspace skills are configured in `.agents/skills/`. When writing code, debugging, or planning:
+- Use `tdd` for test-driven development and feature slicing.
+- Use `diagnosing-bugs` when troubleshooting and fixing hard bugs or regressions.
+- Use `code-review` before finalizing or submitting code changes.
+- Use `codebase-design` and `domain-modeling` when designing architecture, interfaces, and terms.
+- Use `grill-me` or `grill-with-docs` for upfront alignment and design clarification.
+

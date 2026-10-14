@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type ComponentProps } from "react"
 import { animate, scroll } from "motion"
-import { motion, AnimatePresence, useSpring } from "framer-motion"
+import { motion, AnimatePresence, useSpring, frame, cancelFrame } from "framer-motion"
 import { Play, Plus } from "lucide-react"
 import {
   MediaControlBar,
@@ -16,7 +16,10 @@ import {
 import Lenis from "lenis"
 import "lenis/dist/lenis.css"
 import { ThemeToggleButton } from "./ThemeToggle"
-import Skiper30 from "./Skiper30"
+import ParallaxGallery from "./components/ParallaxGallery"
+import StickyNavigation from "./components/StickyNavigation"
+import ProjectShowcase from "./components/ProjectShowcase"
+import { PROJECTS, SERVICES, PROCESS_STEPS, FAQ_QUESTIONS, PORTRAIT_COLUMNS } from "./data/content"
 
 const asset = (name: string) => `/assets/${name}`
 
@@ -550,13 +553,11 @@ export default function App() {
 
   useEffect(() => {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)")
-    let rafId: number
 
     const updateScrolling = () => {
       lenisRef.current?.destroy()
       lenisRef.current = null
       setLenisInstance(null)
-      cancelAnimationFrame(rafId)
 
       if (reducedMotion.matches) return
 
@@ -569,25 +570,28 @@ export default function App() {
         prevent: (element) => Boolean(element.closest('[role="dialog"]')),
       })
 
-      const raf = (time: number) => {
-        lenis.raf(time)
-        rafId = requestAnimationFrame(raf)
+      const updateLenis = ({ timestamp }: { timestamp: number }) => {
+        lenis.raf(timestamp)
       }
-      rafId = requestAnimationFrame(raf)
+      frame.update(updateLenis, true)
 
       lenisRef.current = lenis
       setLenisInstance(lenis)
       if (document.body.style.overflow === "hidden") lenis.stop()
+
+      return () => {
+        cancelFrame(updateLenis)
+        lenis.destroy()
+        lenisRef.current = null
+        setLenisInstance(null)
+      }
     }
 
-    updateScrolling()
+    const cleanup = updateScrolling()
     reducedMotion.addEventListener("change", updateScrolling)
     return () => {
-      cancelAnimationFrame(rafId)
+      cleanup?.()
       reducedMotion.removeEventListener("change", updateScrolling)
-      lenisRef.current?.destroy()
-      lenisRef.current = null
-      setLenisInstance(null)
     }
   }, [])
 
@@ -627,68 +631,10 @@ export default function App() {
           className="relative w-full"
         >
           {/* Main Navigation */}
-          <nav
-            aria-label="Main navigation"
-            ref={(navigation) => {
-              if (!navigation) return;
-              const hero = navigation.parentElement;
-              if (!hero) return;
-              const updateCompact = () => {
-                navigation.dataset.compact = String(hero.getBoundingClientRect().bottom <= 80);
-              };
-              updateCompact();
-              window.addEventListener("scroll", updateCompact, { passive: true });
-              return () => {
-                window.removeEventListener("scroll", updateCompact);
-              };
-            }}
-            className="group fixed left-1/2 top-4 sm:top-5 z-40 flex h-[40px] min-h-[40px] w-[min(calc(100%-32px),540px)] -translate-x-1/2 items-center justify-between gap-1.5 sm:gap-2 rounded-[10px] bg-[#f2f2f2]/95 px-2.5 sm:px-3 text-[15px] text-[#030303] backdrop-blur-xl transition-[width,background-color,color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none data-[compact=true]:w-[217px] data-[compact=true]:bg-[#030303] data-[compact=true]:text-white dark:data-[compact=true]:bg-white dark:data-[compact=true]:text-[#030303]"
-          >
-            <a href="#home" aria-label="OFST" className="flex shrink-0 items-center gap-[7px]">
-              <img
-                src={asset("93b2b.png")}
-                className="size-5 shrink-0 object-contain group-data-[compact=true]:invert dark:group-data-[compact=true]:invert-0"
-                alt=""
-              />
-              <img
-                src="/OFST-blk-trans.svg"
-                alt="OFST"
-                className="block h-[18px] sm:h-[20px] w-auto shrink-0 group-data-[compact=true]:hidden dark:group-data-[compact=true]:block"
-              />
-              <img
-                src="/OFST-wt-trans.svg"
-                alt="OFST"
-                className="hidden h-[18px] sm:h-[20px] w-auto shrink-0 group-data-[compact=true]:block dark:group-data-[compact=true]:hidden"
-              />
-            </a>
-            <div className="flex h-full shrink-0 items-center gap-2 sm:gap-3 md:gap-4">
-                {["About", "Projects", "Services", "Process", "Contact"].map(
-                  (label) => (
-                    <a
-                      key={label}
-                      href={`#${label.toLowerCase()}`}
-                      className={
-                        label === "Contact"
-                          ? "order-2 sm:order-none inline-flex h-[30px] items-center justify-center rounded-[5px] bg-[#d6d6d6]/60 px-2.5 sm:px-3 text-center text-[#030303] text-[13px] sm:text-[14px] leading-none transition-colors hover:bg-[#d6d6d6] hover:text-black group-data-[compact=true]:min-w-[81px] group-data-[compact=true]:h-[30px] group-data-[compact=true]:bg-[#f2f2f2] group-data-[compact=true]:text-[#030303]"
-                          : "text-[#030303] text-[13px] sm:text-[15px] transition-opacity hover:opacity-50 group-data-[compact=true]:hidden hidden sm:inline"
-                      }
-                    >
-                      {label}
-                    </a>
-                  ),
-                )}
-                <div className="order-1 sm:order-none shrink-0 flex items-center group-data-[compact=true]:hidden">
-                  <ThemeToggleButton
-                    variant="circle"
-                    start="top-right"
-                    blur={false}
-                  />
-                </div>
-              </div>
-          </nav>
+          <StickyNavigation heroRef={heroRef} />
 
           {/* Hero Parallax Scroll Gallery */}
-          <Skiper30 lenis={lenisInstance} />
+          <ParallaxGallery lenis={lenisInstance} />
         </section>
 
         <div className="relative z-30 -mt-6 sm:-mt-10 md:-mt-12 grid grid-cols-4 items-center gap-3 rounded-[10px] bg-[#f2f2f2] px-5 py-6">
@@ -722,63 +668,12 @@ export default function App() {
           </p>
         </section>
 
-        <section id="projects" className="scroll-mt-20 pt-10">
-          <h2 className="mb-5 text-[40px] leading-[46.4px] tracking-[-2px]">
-            <RevealLine delay={0.05} className="block">Proof of Less</RevealLine>
-            <RevealLine delay={0.15} className="block text-[#696969]">But More.</RevealLine>
-          </h2>
-          <div className="grid min-h-[500px] grid-cols-1 items-end gap-2 rounded-[10px] bg-[#030303] px-4 pb-4 pt-[10%] text-white dark:bg-white dark:text-[#030303] md:min-h-[min(65vw,991px)] md:grid-cols-2">
-            <button onClick={() => setProject(0)} className="group text-left">
-              <img
-                src={asset(projects[0].image)}
-                alt="void brand identity — black packaging and a red bottle"
-                className="aspect-[738/781] w-full rounded-[5px] object-cover transition-opacity group-hover:opacity-80"
-              />
-              <span className="mt-2 block text-[12px] text-white dark:text-[#030303]">
-                {projects[0].name}
-              </span>
-            </button>
-            <div className="grid grid-cols-3 gap-2">
-              {projects.slice(1).map((item, index) => (
-                <button
-                  onClick={() => setProject(index + 1)}
-                  key={item.name}
-                  className="group text-left"
-                >
-                  <img
-                    src={asset(item.image)}
-                    alt={`${item.name} design project`}
-                    className="aspect-[239/253] w-full rounded-[5px] object-cover transition-opacity group-hover:opacity-80"
-                  />
-                  <span className="mt-2 block text-[12px] text-white dark:text-[#030303]">
-                    {item.name}
-                  </span>
-                </button>
-              ))}
-            </div>
-          </div>
-          <p className="ml-auto mt-20 w-full max-w-[1040px] text-[30px] leading-[1.16] tracking-[-1.5px] [container-type:inline-size] md:text-[40px] md:tracking-[-2px]">
-            <RevealLine delay={0.05} className="md:block md:text-right md:text-[min(40px,3.75cqw)] md:whitespace-nowrap">We craft minimalistic, purposeful digital experiences that</RevealLine>{" "}
-            <RevealLine delay={0.15} className="md:block md:text-left md:text-[min(40px,3.75cqw)] md:whitespace-nowrap">resonate with clarity and intention. Every project is a story; here's</RevealLine>{" "}
-            <RevealLine delay={0.25} className="md:block md:text-left md:text-[min(40px,3.75cqw)]">what ours says..</RevealLine>
-          </p>
-          <div className="grid grid-cols-3 gap-5 py-20 md:py-28 -translate-x-[7px]">
-            {[
-              { val: 8, suffix: "+", label: "Crafting Experiences" },
-              { val: 50, suffix: "+", label: "Projects Delivered" },
-              { val: 20, suffix: "+", label: "Clients Worldwide" },
-            ].map(({ val, suffix, label }, index) => (
-              <div key={label} className="text-center">
-                <p className="text-[55px] font-semibold leading-[1.65] tracking-[-5px] md:text-[90px] md:tracking-[-10px]">
-                  <Counter target={val} suffix={suffix} />
-                </p>
-                <p className="mt-3 text-[12px] tracking-[-0.4px] md:text-[20px]">
-                  <RevealLine delay={0.15 + index * 0.08}>{label}</RevealLine>
-                </p>
-              </div>
-            ))}
-          </div>
-        </section>
+        {/* Projects Section */}
+        <ProjectShowcase
+          projects={PROJECTS}
+          activeProject={project}
+          setActiveProject={setProject}
+        />
 
         <section id="services" className="scroll-mt-20">
           <div className="flex min-h-[min(65vw,991px)] flex-col justify-between rounded-[5px] bg-[#030303] p-5 text-white dark:bg-white dark:text-[#030303] max-md:min-h-[470px]">
@@ -1413,39 +1308,6 @@ export default function App() {
       {/* Viewport top & bottom blur bars */}
       <div aria-hidden="true" className="top-blur-gradient" />
       <div aria-hidden="true" className="bottom-blur-gradient" />
-
-      {project !== null && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 p-5 backdrop-blur-sm"
-          onClick={() => setProject(null)}
-        >
-          <div
-            role="dialog"
-            aria-modal="true"
-            aria-label={projects[project].name}
-            className="relative max-h-[90dvh] max-w-[760px] overflow-auto rounded-[10px] bg-[#030303] p-4 text-white"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <button
-              autoFocus
-              onClick={() => setProject(null)}
-              onKeyDown={(event) => {
-                if (event.key === "Escape") setProject(null)
-              }}
-              aria-label="Close project"
-              className="absolute right-6 top-6 rounded-full bg-black px-3 py-1 text-[24px]"
-            >
-              ×
-            </button>
-            <img
-              src={asset(projects[project].image)}
-              alt={projects[project].name}
-              className="max-h-[75dvh] w-full object-contain"
-            />
-            <h2 className="pt-4 text-[20px]">{projects[project].name}</h2>
-          </div>
-        </div>
-      )}
     </div>
   )
 }
