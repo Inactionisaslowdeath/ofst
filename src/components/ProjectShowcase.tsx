@@ -1,71 +1,8 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { animate } from "motion"
 import type { ProjectItem } from "../data/content"
 
-function Counter({
-  target,
-  suffix = "",
-}: {
-  target: number
-  suffix?: string
-}) {
-  const [displayValue, setDisplayValue] = useState(0)
-  const inView = useRef(false)
-
-  return (
-    <motion.span
-      initial={{ opacity: 0, y: 16, filter: "blur(10px)" }}
-      whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-      viewport={{ once: true, margin: "0px 0px -60px 0px" }}
-      onViewportEnter={() => {
-        if (inView.current) return
-        inView.current = true
-        animate(0, target, {
-          duration: 1.8,
-          ease: [0.16, 1, 0.3, 1],
-          onUpdate: (latest) => {
-            setDisplayValue(Math.round(latest))
-          },
-        })
-      }}
-      transition={{
-        duration: 0.8,
-        ease: [0.16, 1, 0.3, 1],
-      }}
-      className="inline-block tabular-nums"
-    >
-      {displayValue}
-      {suffix}
-    </motion.span>
-  )
-}
-
-function RevealLine({
-  children,
-  className = "",
-  delay = 0,
-}: {
-  children: React.ReactNode
-  className?: string
-  delay?: number
-}) {
-  return (
-    <motion.span
-      initial={{ opacity: 0, y: 28, filter: "blur(10px)" }}
-      whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-      viewport={{ once: true, margin: "0px 0px -60px 0px" }}
-      transition={{
-        duration: 0.8,
-        delay,
-        ease: [0.16, 1, 0.3, 1],
-      }}
-      className={`inline-block ${className}`}
-    >
-      {children}
-    </motion.span>
-  )
-}
+import { Counter, RevealLine } from "./ui/MotionPrimitives"
 
 export interface ProjectShowcaseProps {
   projects: ProjectItem[]
@@ -99,7 +36,9 @@ export function ProjectShowcase({
     <section id="projects" className="scroll-mt-20 pt-10">
       <h2 className="mb-5 text-[40px] leading-[46.4px] tracking-[-2px]">
         <RevealLine className="block">Proof of Less</RevealLine>
-        <RevealLine delay={0.1} className="block text-[#696969]">But More.</RevealLine>
+        <RevealLine delay={0.1} className="block text-[#696969]">
+          But More.
+        </RevealLine>
       </h2>
 
       <div className="grid min-h-[500px] grid-cols-1 items-end gap-2 rounded-[10px] bg-[#030303] px-4 pb-4 pt-[10%] text-white dark:bg-white dark:text-[#030303] md:min-h-[min(65vw,991px)] md:grid-cols-2">
@@ -140,9 +79,24 @@ export function ProjectShowcase({
       </div>
 
       <p className="ml-auto mt-20 w-full max-w-[1040px] text-[30px] leading-[1.16] tracking-[-1.5px] [container-type:inline-size] md:text-[40px] md:tracking-[-2px]">
-        <RevealLine delay={0.05} className="md:block md:text-right md:text-[min(40px,3.75cqw)] md:whitespace-nowrap">We craft minimalistic, purposeful digital experiences that</RevealLine>{" "}
-        <RevealLine delay={0.15} className="md:block md:text-left md:text-[min(40px,3.75cqw)] md:whitespace-nowrap">resonate with clarity and intention. Every project is a story; here's</RevealLine>{" "}
-        <RevealLine delay={0.25} className="md:block md:text-left md:text-[min(40px,3.75cqw)]">what ours says..</RevealLine>
+        <RevealLine
+          delay={0.05}
+          className="md:block md:text-right md:text-[min(40px,3.75cqw)] md:whitespace-nowrap"
+        >
+          We craft minimalistic, purposeful digital experiences that
+        </RevealLine>{" "}
+        <RevealLine
+          delay={0.15}
+          className="md:block md:text-left md:text-[min(40px,3.75cqw)] md:whitespace-nowrap"
+        >
+          resonate with clarity and intention. Every project is a story; here's
+        </RevealLine>{" "}
+        <RevealLine
+          delay={0.25}
+          className="md:block md:text-left md:text-[min(40px,3.75cqw)]"
+        >
+          what ours says..
+        </RevealLine>
       </p>
 
       <div className="grid grid-cols-3 gap-5 py-20 md:py-28 -translate-x-[7px]">
@@ -198,7 +152,9 @@ export function ProjectShowcase({
                 alt={selectedItem.name}
                 className="max-h-[75dvh] w-full object-contain"
               />
-              <h2 className="pt-4 text-[20px] font-medium">{selectedItem.name}</h2>
+              <h2 className="pt-4 text-[20px] font-medium">
+                {selectedItem.name}
+              </h2>
             </motion.div>
           </motion.div>
         )}

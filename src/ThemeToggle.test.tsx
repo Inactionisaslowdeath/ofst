@@ -1,37 +1,37 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { render, screen, fireEvent, act } from '@testing-library/react'
-import '@testing-library/jest-dom'
-import ThemeToggleButton from './ThemeToggle'
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest"
+import { render, screen, fireEvent, act } from "@testing-library/react"
+import "@testing-library/jest-dom"
+import ThemeToggleButton from "./ThemeToggle"
 
-describe('ThemeToggleButton (Deep Module Seam)', () => {
+describe("ThemeToggleButton (Deep Module Seam)", () => {
   beforeEach(() => {
-    document.documentElement.className = ''
+    document.documentElement.className = ""
   })
 
   afterEach(() => {
-    document.documentElement.className = ''
+    document.documentElement.className = ""
     vi.restoreAllMocks()
   })
 
-  it('renders theme toggle button with accessible aria-label', () => {
+  it("renders theme toggle button with accessible aria-label", () => {
     render(<ThemeToggleButton />)
-    const button = screen.getByRole('button', { name: /toggle theme/i })
+    const button = screen.getByRole("button", { name: /toggle theme/i })
     expect(button).toBeDefined()
     expect(document.body.contains(button)).toBe(true)
   })
 
-  it('toggles dark mode class on document element on click', () => {
+  it("toggles dark mode class on document element on click", () => {
     render(<ThemeToggleButton />)
-    const button = screen.getByRole('button', { name: /toggle theme/i })
+    const button = screen.getByRole("button", { name: /toggle theme/i })
 
-    expect(document.documentElement.classList.contains('dark')).toBe(false)
+    expect(document.documentElement.classList.contains("dark")).toBe(false)
     act(() => {
-      fireEvent.click(button)
+      button.click()
     })
-    expect(document.documentElement.classList.contains('dark')).toBe(true)
+    expect(document.documentElement.classList.contains("dark")).toBe(true)
     act(() => {
-      fireEvent.click(button)
+      button.click()
     })
-    expect(document.documentElement.classList.contains('dark')).toBe(false)
+    expect(document.documentElement.classList.contains("dark")).toBe(false)
   })
 })

@@ -1,19 +1,25 @@
 import { motion } from "framer-motion"
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useSyncExternalStore } from "react"
+
+const subscribeToTheme = (callback: () => void) => {
+  if (typeof window === "undefined") return () => {}
+  const observer = new MutationObserver(callback)
+  observer.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ["class"],
+  })
+  return () => observer.disconnect()
+}
+
+const getThemeSnapshot = () => {
+  if (typeof window === "undefined") return false
+  return document.documentElement.classList.contains("dark")
+}
+
+const getThemeServerSnapshot = () => false
 
 export type AnimationVariant = "circle" | "rectangle" | "circle-blur" | "polygon" | "gif"
-export type AnimationStart =
-  | "top-left"
-  | "top-right"
-  | "bottom-left"
-  | "bottom-right"
-  | "center"
-  | "top-center"
-  | "bottom-center"
-  | "bottom-up"
-  | "top-down"
-  | "left-right"
-  | "right-left"
+export type AnimationStart = "top-left" | "top-right" | "bottom-left" | "bottom-right" | "center" | "top-center" | "bottom-center" | "bottom-up" | "top-down" | "left-right" | "right-left"
 
 interface Animation {
   name: string
@@ -106,22 +112,11 @@ export const useThemeToggle = ({
   blur?: boolean
   gifUrl?: string
 } = {}) => {
-  const [isDark, setIsDark] = useState<boolean>(() => {
-    if (typeof window === "undefined") return false
-    return document.documentElement.classList.contains("dark")
-  })
-
-  useEffect(() => {
-    const checkDark = () => {
-      setIsDark(document.documentElement.classList.contains("dark"))
-    }
-    const observer = new MutationObserver(checkDark)
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ["class"],
-    })
-    return () => observer.disconnect()
-  }, [])
+  const isDark = useSyncExternalStore(
+    subscribeToTheme,
+    getThemeSnapshot,
+    getThemeServerSnapshot,
+  )
 
   const styleId = "theme-transition-styles"
 
@@ -139,7 +134,7 @@ export const useThemeToggle = ({
   }, [])
 
   const toggleTheme = useCallback(() => {
-    const nextIsDark = !isDark
+    const nextIsDark = !document.documentElement.classList.contains("dark")
     const animation = createAnimation(variant, start, blur)
     updateStyles(animation.css)
 
@@ -149,7 +144,6 @@ export const useThemeToggle = ({
       } else {
         document.documentElement.classList.remove("dark")
       }
-      setIsDark(nextIsDark)
     }
 
     const doc = document as { startViewTransition?: (cb: () => void) => void }
@@ -159,11 +153,10 @@ export const useThemeToggle = ({
     }
 
     doc.startViewTransition(switchTheme)
-  }, [variant, start, blur, updateStyles, isDark])
+  }, [variant, start, blur, updateStyles])
 
   return {
     isDark,
-    setIsDark,
     toggleTheme,
   }
 }

@@ -26,7 +26,12 @@ export interface PortraitColumn {
 }
 
 export const PROJECTS: ProjectItem[] = [
-  { id: 0, name: "void®", image: "e3bbf.png", alt: "void brand identity — black packaging and a red bottle" },
+  {
+    id: 0,
+    name: "void®",
+    image: "e3bbf.png",
+    alt: "void brand identity — black packaging and a red bottle",
+  },
   { id: 1, name: "offset studio", image: "cbc79.png" },
   { id: 2, name: "null.al", image: "35ff7.png" },
   { id: 3, name: "monolith™", image: "56261.png" },
@@ -40,33 +45,53 @@ export const SERVICES: ServiceItem[] = [
 ]
 
 export const PROCESS_STEPS: ProcessStep[] = [
-  { title: "Listen", description: "We begin in silence. Understanding comes before creation." },
-  { title: "Explore", description: "We look beyond the obvious. Possibilities become direction." },
-  { title: "Refine", description: "We remove the unnecessary. Every detail has a purpose." },
-  { title: "Build", description: "We turn intention into experience. Thoughtfully, precisely." },
-  { title: "Reflect", description: "We step back, listen again, and make room to evolve." },
+  {
+    title: "Listen",
+    description: "We begin in silence. Understanding comes before creation.",
+  },
+  {
+    title: "Explore",
+    description: "We look beyond the obvious. Possibilities become direction.",
+  },
+  {
+    title: "Refine",
+    description: "We remove the unnecessary. Every detail has a purpose.",
+  },
+  {
+    title: "Build",
+    description: "We turn intention into experience. Thoughtfully, precisely.",
+  },
+  {
+    title: "Reflect",
+    description: "We step back, listen again, and make room to evolve.",
+  },
 ]
 
 export const FAQ_QUESTIONS: FaqQuestion[] = [
   {
     question: "Why ‘Less But More’?",
-    answer: "Because powerful design doesn't need to shout, it needs to resonate. We remove the noise so the essential can speak.",
+    answer:
+      "Because powerful design doesn't need to shout, it needs to resonate. We remove the noise so the essential can speak.",
   },
   {
     question: "What kind of projects do you take on?",
-    answer: "We work across brand identity, websites, digital products, and editorial design. Each project starts with your vision.",
+    answer:
+      "We work across brand identity, websites, digital products, and editorial design. Each project starts with your vision.",
   },
   {
     question: "How long does a typical project take?",
-    answer: "Timelines depend on the scope. We agree on a clear schedule together before the project begins.",
+    answer:
+      "Timelines depend on the scope. We agree on a clear schedule together before the project begins.",
   },
   {
     question: "What's your process like?",
-    answer: "Listen, explore, refine, build, and reflect. A collaborative process, with clarity at every step.",
+    answer:
+      "Listen, explore, refine, build, and reflect. A collaborative process, with clarity at every step.",
   },
   {
     question: "Do you offer ongoing support?",
-    answer: "Yes. We can continue supporting and refining your brand and digital experiences after launch.",
+    answer:
+      "Yes. We can continue supporting and refining your brand and digital experiences after launch.",
   },
 ]
 

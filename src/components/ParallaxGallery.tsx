@@ -74,8 +74,13 @@ export function ParallaxGallery({ lenis }: ParallaxGalleryProps) {
     const updateProgress = (currentScroll?: number) => {
       const scrollY = currentScroll ?? window.scrollY
       const viewportHeight = window.innerHeight
-      const elementTop = cachedTop || (gallery.current ? gallery.current.getBoundingClientRect().top + window.scrollY : 0)
-      const elementHeight = cachedHeight || (gallery.current ? gallery.current.offsetHeight : 0)
+      const elementTop =
+        cachedTop ||
+        (gallery.current
+          ? gallery.current.getBoundingClientRect().top + window.scrollY
+          : 0)
+      const elementHeight =
+        cachedHeight || (gallery.current ? gallery.current.offsetHeight : 0)
 
       const start = elementTop - viewportHeight
       const end = elementTop + elementHeight
@@ -115,12 +120,26 @@ export function ParallaxGallery({ lenis }: ParallaxGalleryProps) {
     <div className="relative w-screen left-1/2 -translate-x-1/2 overflow-x-hidden">
       <div
         ref={gallery}
-        className="relative box-border flex h-[175vh] w-screen gap-[2vw] overflow-hidden bg-white dark:bg-[#09090b] px-[2vw] pt-[2vw] pb-0"
+        className="relative box-border flex h-[175dvh] w-screen gap-[2vw] overflow-hidden bg-white dark:bg-[#09090b] px-[2vw] pt-[2vw] pb-0"
       >
-        <GalleryColumn images={[IMAGES[0], IMAGES[1], IMAGES[2], IMAGES[12]]} y={y} />
-        <GalleryColumn images={[IMAGES[3], IMAGES[4], IMAGES[5], IMAGES[10]]} y={y2} />
-        <GalleryColumn images={[IMAGES[6], IMAGES[7], IMAGES[8]]} y={y3} className="hidden sm:flex" />
-        <GalleryColumn images={[IMAGES[9], IMAGES[10], IMAGES[11]]} y={y4} className="hidden md:flex" />
+        <GalleryColumn
+          images={[IMAGES[0], IMAGES[1], IMAGES[2], IMAGES[12]]}
+          y={y}
+        />
+        <GalleryColumn
+          images={[IMAGES[3], IMAGES[4], IMAGES[5], IMAGES[10]]}
+          y={y2}
+        />
+        <GalleryColumn
+          images={[IMAGES[6], IMAGES[7], IMAGES[8]]}
+          y={y3}
+          className="hidden sm:flex"
+        />
+        <GalleryColumn
+          images={[IMAGES[9], IMAGES[10], IMAGES[11]]}
+          y={y4}
+          className="hidden md:flex"
+        />
 
         <div aria-hidden="true" className="hero-gallery-fade" />
       </div>
@@ -146,7 +165,9 @@ function GalleryColumn({
         <div
           key={i}
           className={`relative w-full overflow-hidden rounded-[10px] ${
-            i === 3 ? "flex sm:hidden h-[calc(25%-70px)]" : "h-[calc(25%-70px)] sm:h-full"
+            i === 3
+              ? "flex sm:hidden h-[calc(25%-70px)]"
+              : "h-[calc(25%-70px)] sm:h-full"
           }`}
         >
           <img

@@ -205,6 +205,10 @@ html.dark {
   }
 }
 
+.reveal-line-block {
+  display: block !important;
+}
+
 
 
 
