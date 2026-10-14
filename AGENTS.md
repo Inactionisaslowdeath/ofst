@@ -63,3 +63,13 @@ Workspace skills are configured in `.agents/skills/`. When writing code, debuggi
 - Use `codebase-design` and `domain-modeling` when designing architecture, interfaces, and terms.
 - Use `grill-me` or `grill-with-docs` for upfront alignment and design clarification.
 
+### Design, UI/UX & Motion Directives (MANDATORY)
+
+Whenever building, modifying, refactoring, or reviewing ANY user interface, CSS, styling, gestures, or animations:
+- **Mandatory Skills**: You MUST consult and follow `emil-design-eng`, `apple-design`, `animation-performance`, `animate`, `improve-animations`, `mobile-native`, and `performance-optimization`.
+- **Zero-Jank Motion**: Strictly adhere to 60fps/120fps frame budgets. Animate ONLY composite properties (`transform`, `opacity`). Never animate `width`, `height`, `margin`, `padding`, or `top/left/right/bottom`.
+- **Never use `transition: all`**: Explicitly specify transitions (`transform 150ms ease-out, opacity 150ms ease-out`).
+- **Tactile Feedback**: Press states respond immediately on pointer-down (`scale(0.97)`). Never wait for click release.
+- **Mobile First-Class**: Use `dvh` units, eliminate sticky touch hovers with `@media (hover: hover)`, and prevent mobile tap delay.
+
+

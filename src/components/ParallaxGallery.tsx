@@ -34,14 +34,19 @@ export function ParallaxGallery({ lenis }: ParallaxGalleryProps) {
   const y4 = useTransform(scrollYProgress, [0, 1], [0, height * 3])
 
   useEffect(() => {
+    let rAF = 0
     const resize = () => {
-      setDimension({ width: window.innerWidth, height: window.innerHeight })
+      cancelAnimationFrame(rAF)
+      rAF = requestAnimationFrame(() => {
+        setDimension({ width: window.innerWidth, height: window.innerHeight })
+      })
     }
 
     window.addEventListener("resize", resize)
     resize()
 
     return () => {
+      cancelAnimationFrame(rAF)
       window.removeEventListener("resize", resize)
     }
   }, [])
@@ -49,6 +54,7 @@ export function ParallaxGallery({ lenis }: ParallaxGalleryProps) {
   useEffect(() => {
     let cachedTop = 0
     let cachedHeight = 0
+    let rAF = 0
 
     const measureBounds = () => {
       if (!gallery.current) return
@@ -57,8 +63,13 @@ export function ParallaxGallery({ lenis }: ParallaxGalleryProps) {
       cachedHeight = rect.height
     }
 
+    const onResize = () => {
+      cancelAnimationFrame(rAF)
+      rAF = requestAnimationFrame(measureBounds)
+    }
+
     measureBounds()
-    window.addEventListener("resize", measureBounds)
+    window.addEventListener("resize", onResize)
 
     const updateProgress = (currentScroll?: number) => {
       const scrollY = currentScroll ?? window.scrollY
@@ -84,7 +95,8 @@ export function ParallaxGallery({ lenis }: ParallaxGalleryProps) {
       lenis.on("scroll", handleScroll)
       return () => {
         lenis.off("scroll", handleScroll)
-        window.removeEventListener("resize", measureBounds)
+        cancelAnimationFrame(rAF)
+        window.removeEventListener("resize", onResize)
       }
     } else {
       const handleNativeScroll = () => {
@@ -93,7 +105,8 @@ export function ParallaxGallery({ lenis }: ParallaxGalleryProps) {
       window.addEventListener("scroll", handleNativeScroll, { passive: true })
       return () => {
         window.removeEventListener("scroll", handleNativeScroll)
-        window.removeEventListener("resize", measureBounds)
+        cancelAnimationFrame(rAF)
+        window.removeEventListener("resize", onResize)
       }
     }
   }, [lenis, scrollYProgress])

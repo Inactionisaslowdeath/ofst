@@ -58,8 +58,8 @@ export function StickyNavigation({ heroRef }: StickyNavigationProps) {
             href={`#${label.toLowerCase()}`}
             className={
               label === "Contact"
-                ? "order-2 sm:order-none inline-flex h-[30px] items-center justify-center rounded-[5px] bg-[#d6d6d6]/60 px-2.5 sm:px-3 text-center text-[#030303] text-[13px] sm:text-[14px] leading-none transition-colors hover:bg-[#d6d6d6] hover:text-black group-data-[compact=true]:min-w-[81px] group-data-[compact=true]:h-[30px] group-data-[compact=true]:bg-[#f2f2f2] group-data-[compact=true]:text-[#030303]"
-                : "text-[#030303] text-[13px] sm:text-[15px] transition-opacity hover:opacity-50 group-data-[compact=true]:hidden hidden sm:inline"
+                ? "order-2 sm:order-none inline-flex h-[30px] items-center justify-center rounded-[5px] bg-[#d6d6d6]/60 px-2.5 sm:px-3 text-center text-[#030303] text-[13px] sm:text-[14px] leading-none transition-[background-color,color,transform] duration-150 active:scale-[0.96] hover:bg-[#d6d6d6] hover:text-black group-data-[compact=true]:min-w-[81px] group-data-[compact=true]:h-[30px] group-data-[compact=true]:bg-[#f2f2f2] group-data-[compact=true]:text-[#030303]"
+                : "text-[#030303] text-[13px] sm:text-[15px] transition-opacity duration-150 active:opacity-70 hover:opacity-50 group-data-[compact=true]:hidden hidden sm:inline"
             }
           >
             {label}

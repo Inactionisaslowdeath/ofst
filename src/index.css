@@ -93,8 +93,10 @@ html.dark {
   animation: marquee 55s linear infinite;
 }
 
-.animate-marquee:hover {
-  animation-play-state: paused;
+@media (hover: hover) and (pointer: fine) {
+  .animate-marquee:hover {
+    animation-play-state: paused;
+  }
 }
 
 /* Progressive blur mask for bottom viewport overlay */
