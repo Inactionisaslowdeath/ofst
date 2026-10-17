@@ -4,9 +4,13 @@ import { RevealLine } from "./ui/MotionPrimitives"
 
 export interface ContactSectionProps {
   lenis: Lenis | null
+  initialConverged?: boolean
 }
 
-export function ContactSection({ lenis }: ContactSectionProps) {
+export function ContactSection({
+  lenis,
+  initialConverged,
+}: ContactSectionProps) {
   const [contactStatus, setContactStatus] = useState("")
   const sectionRef = useRef<HTMLElement | null>(null)
   const leftHandRef = useRef<HTMLImageElement | null>(null)
@@ -22,6 +26,11 @@ export function ContactSection({ lenis }: ContactSectionProps) {
 
     const updateHands = () => {
       if (!section || !leftHand || !rightHand) return
+      if (initialConverged) {
+        leftHand.style.transform = "translate3d(0, 0, 0)"
+        rightHand.style.transform = "translate3d(0, 0, 0)"
+        return
+      }
       const rect = section.getBoundingClientRect()
       const windowHeight = window.innerHeight
 
@@ -58,33 +67,43 @@ export function ContactSection({ lenis }: ContactSectionProps) {
         window.removeEventListener("resize", handleScroll)
       }
     }
-  }, [lenis])
+  }, [lenis, initialConverged])
 
   return (
     <section
       id="contact"
       ref={sectionRef}
-      className="relative mb-2 scroll-mt-20 overflow-hidden rounded-[10px] border-[4px] border-[#030303] dark:border-white py-12"
+      className="relative mb-0 scroll-mt-20 overflow-hidden rounded-[10px] border-[4px] border-[#030303] dark:border-white py-12"
     >
       <img
         ref={leftHandRef}
         src="/assets/788a4.png"
         alt="A hand reaching toward the center"
         className="pointer-events-none absolute left-0 top-3 w-[31%] max-md:hidden will-change-transform [backface-visibility:hidden]"
-        style={{ transform: "translate3d(-130%, 0, 0)" }}
+        style={{
+          transform: initialConverged
+            ? "translate3d(0, 0, 0)"
+            : "translate3d(-130%, 0, 0)",
+        }}
       />
       <img
         ref={rightHandRef}
         src="/assets/3400b.png"
         alt="A hand reaching from the other side"
         className="pointer-events-none absolute right-0 top-3 w-[31%] max-md:hidden will-change-transform [backface-visibility:hidden]"
-        style={{ transform: "translate3d(130%, 0, 0)" }}
+        style={{
+          transform: initialConverged
+            ? "translate3d(0, 0, 0)"
+            : "translate3d(130%, 0, 0)",
+        }}
       />
       <div className="relative mx-auto max-w-[500px] text-center">
-        <h2 className="text-[32px] leading-[41.6px] tracking-[-0.96px]">
-          <RevealLine>Let's build with intent.</RevealLine>
+        <h2 className="text-[32px] leading-[41.6px] tracking-tight-statement">
+          <RevealLine className="inline-block text-gradient-black-to-white">
+            Let's build with intent.
+          </RevealLine>
         </h2>
-        <p className="mt-3 text-[16px] leading-[18.4px] tracking-[-0.48px]">
+        <p className="mt-3 text-[16px] leading-[18.4px] tracking-[-0.54px]">
           <RevealLine delay={0.05} className="block">
             Tell us what you want to make better.
           </RevealLine>

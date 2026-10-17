@@ -42,8 +42,13 @@ export function TestimonialsSection() {
             )
           })}
         </div>
-        <h2 className="absolute inset-x-0 top-[87%] text-center text-[clamp(20px,4vw,40px)] leading-[1.16] tracking-[-0.04em] font-medium sm:font-normal">
-          <RevealLine delay={0.28}>Good work. Clear thinking.</RevealLine>
+        <h2 className="absolute inset-x-0 top-[82%] sm:top-[85%] text-center text-[clamp(24px,4.5vw,48px)] leading-[1.12] tracking-tight-display font-medium sm:font-normal">
+          <RevealLine
+            delay={0.28}
+            className="inline-block text-gradient-black-to-white"
+          >
+            Good work. Clear thinking.
+          </RevealLine>
         </h2>
       </div>
       <div className="mx-auto grid max-w-[920px] gap-[10px] md:grid-cols-3">
@@ -81,15 +86,15 @@ export function TestimonialsSection() {
                 />
               </div>
               <div className="flex flex-col justify-center py-2 pr-3">
-                <p className="text-[16px] leading-[19.2px] tracking-[-0.48px] text-[#030303]">
+                <p className="text-[16px] leading-[19.2px] tracking-[-0.54px] text-[#030303]">
                   <RevealLine delay={0.1 + index * 0.08}>{name}</RevealLine>
                 </p>
-                <p className="mt-[3px] text-[12px] leading-[14.4px] tracking-[-0.24px] text-[#696969]">
+                <p className="mt-[3px] text-[12px] leading-[14.4px] tracking-[-0.54px] text-[#696969]">
                   <RevealLine delay={0.16 + index * 0.08}>{title}</RevealLine>
                 </p>
               </div>
             </figcaption>
-            <blockquote className="flex min-h-[100px] items-center justify-center rounded-[5px] bg-[#f2f2f2] p-3 text-center text-[16px] leading-[18.4px] tracking-[-0.48px] text-[#030303]">
+            <blockquote className="flex min-h-[100px] items-center justify-center rounded-[5px] bg-[#f2f2f2] p-3 text-center text-[16px] leading-[18.4px] tracking-[-0.54px] text-[#030303]">
               <RevealLine delay={0.22 + index * 0.08}>{quote}</RevealLine>
             </blockquote>
           </figure>

@@ -18,7 +18,7 @@ export function ProcessSection() {
       >
         <AnimatePresence mode="popLayout">
           <motion.div key={step} className="flex flex-col items-center">
-            <h2 className="text-[40px] leading-[46.4px] tracking-[-2px] flex overflow-hidden">
+            <h2 className="process-title-gradient text-[40px] leading-[46.4px] tracking-tight-display flex overflow-hidden">
               {PROCESS_STEPS[step].title.split("").map((char, i) => (
                 <motion.span
                   key={`${step}-${i}`}
@@ -30,6 +30,7 @@ export function ProcessSection() {
                     ease: [0.16, 1, 0.3, 1],
                     delay: i * 0.04,
                   }}
+                  className="process-title-gradient"
                   style={{ display: "inline-block", whiteSpace: "pre" }}
                 >
                   {char}
@@ -46,7 +47,7 @@ export function ProcessSection() {
                 ease: [0.16, 1, 0.3, 1],
                 delay: 0.1,
               }}
-              className="mt-3 text-[16px] tracking-[-0.48px]"
+              className="mt-3 text-[16px] tracking-[-0.54px]"
             >
               {PROCESS_STEPS[step].description}
             </motion.p>

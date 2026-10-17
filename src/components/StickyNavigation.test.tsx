@@ -1,5 +1,5 @@
-import { describe, it, expect } from "vitest"
-import { render, screen } from "@testing-library/react"
+import { describe, it, expect, vi } from "vitest"
+import { render, screen, fireEvent } from "@testing-library/react"
 import { StickyNavigation } from "./StickyNavigation"
 
 describe("StickyNavigation", () => {
@@ -37,5 +37,15 @@ describe("StickyNavigation", () => {
 
     const nav = screen.getByRole("navigation", { name: /main navigation/i })
     expect(nav.getAttribute("data-compact")).toBe("true")
+  })
+
+  it("works without heroRef and triggers onNavigateHome when clicking logo", () => {
+    const onNavigateHome = vi.fn()
+    render(<StickyNavigation onNavigateHome={onNavigateHome} />)
+
+    const logo = screen.getByRole("link", { name: /ofst home/i })
+    expect(logo).toBeDefined()
+    fireEvent.click(logo)
+    expect(onNavigateHome).toHaveBeenCalledTimes(1)
   })
 })

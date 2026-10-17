@@ -186,49 +186,40 @@ export const ThemeToggleButton = ({
       onClick={toggleTheme}
       aria-label="Toggle theme"
     >
-      <svg
+      <motion.svg
         xmlns="http://www.w3.org/2000/svg"
         aria-hidden="true"
         fill="currentColor"
         strokeLinecap="round"
-        viewBox="0 0 32 32"
+        strokeLinejoin="round"
+        viewBox="0 0 24 24"
         className="size-full"
+        animate={{ rotate: isDark ? 40 : 0 }}
+        transition={{ type: "spring", stiffness: 350, damping: 25 }}
       >
-        <clipPath id="theme-toggle-clip">
-          <motion.path
-            animate={{ y: isDark ? 10 : 0, x: isDark ? -12 : 0 }}
-            transition={{ type: "spring", stiffness: 380, damping: 28 }}
-            d="M0-5h30a1 1 0 0 0 9 13v24H0Z"
+        {isDark ? (
+          /* Classic Half / Crescent Moon */
+          <path
+            d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"
+            fill="currentColor"
           />
-        </clipPath>
-        <g clipPath="url(#theme-toggle-clip)">
-          <motion.circle
-            animate={{ r: isDark ? 10 : 8 }}
-            transition={{ type: "spring", stiffness: 380, damping: 28 }}
-            cx="16"
-            cy="16"
-          />
-          <motion.g
-            animate={{
-              rotate: isDark ? -100 : 0,
-              scale: isDark ? 0.5 : 1,
-              opacity: isDark ? 0 : 1,
-            }}
-            transition={{ type: "spring", stiffness: 380, damping: 28 }}
-            stroke="currentColor"
-            strokeWidth="1.5"
-          >
-            <path d="M16 5.5v-4" />
-            <path d="M16 30.5v-4" />
-            <path d="M1.5 16h4" />
-            <path d="M26.5 16h4" />
-            <path d="m23.4 8.6 2.8-2.8" />
-            <path d="m5.7 26.3 2.9-2.9" />
-            <path d="m5.8 5.8 2.8 2.8" />
-            <path d="m23.4 23.4 2.9 2.9" />
-          </motion.g>
-        </g>
-      </svg>
+        ) : (
+          /* Sun with radiating beams */
+          <>
+            <circle cx="12" cy="12" r="5" fill="currentColor" />
+            <g stroke="currentColor" strokeWidth="2" fill="none">
+              <line x1="12" y1="1" x2="12" y2="3" />
+              <line x1="12" y1="21" x2="12" y2="23" />
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+              <line x1="1" y1="12" x2="3" y2="12" />
+              <line x1="21" y1="12" x2="23" y2="12" />
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+            </g>
+          </>
+        )}
+      </motion.svg>
     </button>
   )
 }

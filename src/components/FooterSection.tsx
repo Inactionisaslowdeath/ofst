@@ -4,96 +4,45 @@ import { RevealLine } from "./ui/MotionPrimitives"
 
 export interface FooterSectionProps {
   lenis: Lenis | null
+  onNavigateContact?: () => void
+  onNavigateHome?: () => void
+  onNavigateProjects?: () => void
+  onNavigateAbout?: () => void
 }
 
-export function FooterSection({ lenis }: FooterSectionProps) {
+export function FooterSection({
+  lenis,
+  onNavigateContact,
+  onNavigateHome,
+  onNavigateProjects,
+  onNavigateAbout,
+}: FooterSectionProps) {
   const [subscribed, setSubscribed] = useState(false)
-  const footerContainerRef = useRef<HTMLDivElement | null>(null)
-  const footerBottomRef = useRef<HTMLDivElement | null>(null)
-  const newsletterStickyRef = useRef<HTMLDivElement | null>(null)
   const marqueeRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      if (footerBottomRef.current)
-        footerBottomRef.current.style.transform = "none"
-      if (newsletterStickyRef.current)
-        newsletterStickyRef.current.style.transform = "none"
-      return
-    }
-
-    const container = footerContainerRef.current
-    const bottom = footerBottomRef.current
-    const newsletter = newsletterStickyRef.current
-    if (!container || !bottom || !newsletter) return
-
-    const updateFooter = () => {
-      if (!container || !bottom || !newsletter) return
-      const rect = container.getBoundingClientRect()
-      const windowHeight = window.innerHeight
-
-      const newsletterHeight = newsletter.offsetHeight
-      const bottomHeight = bottom.offsetHeight
-      const revealDistance = bottomHeight
-
-      if (rect.top > windowHeight) {
-        bottom.style.transform = "translate3d(0, -100%, 0)"
-        return
-      }
-
-      const startPin = windowHeight - newsletterHeight
-      const progress = Math.max(
-        0,
-        Math.min(1, (startPin - rect.top) / revealDistance),
-      )
-      const footerY = -100 * (1 - progress)
-      bottom.style.transform = `translate3d(0, ${footerY.toFixed(2)}%, 0)`
-    }
-
-    updateFooter()
-
-    // Pause marquee when off-screen to save frame budget and GPU memory
     const marqueeEl = marqueeRef.current
-    let observer: IntersectionObserver | null = null
-    if (marqueeEl && "IntersectionObserver" in window) {
-      observer = new IntersectionObserver(
-        ([entry]) => {
-          marqueeEl.style.animationPlayState = entry.isIntersecting
-            ? "running"
-            : "paused"
-        },
-        { threshold: 0 },
-      )
-      observer.observe(marqueeEl)
-    }
-
-    if (lenis) {
-      const handleLenis = () => updateFooter()
-      lenis.on("scroll", handleLenis)
-      return () => {
-        lenis.off("scroll", handleLenis)
-        observer?.disconnect()
-      }
-    } else {
-      const handleScroll = () => updateFooter()
-      window.addEventListener("scroll", handleScroll, { passive: true })
-      window.addEventListener("resize", handleScroll)
-      return () => {
-        window.removeEventListener("scroll", handleScroll)
-        window.removeEventListener("resize", handleScroll)
-        observer?.disconnect()
-      }
-    }
-  }, [lenis])
+    if (!marqueeEl || !("IntersectionObserver" in window)) return
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        marqueeEl.style.animationPlayState = entry.isIntersecting
+          ? "running"
+          : "paused"
+      },
+      { threshold: 0 },
+    )
+    observer.observe(marqueeEl)
+    return () => observer.disconnect()
+  }, [])
 
   return (
-    <div ref={footerContainerRef} className="relative z-10 w-full">
-      {/* Sticky Newsletter & Ticker Curtain */}
+    <>
+      {/* Opaque cover layer: it scrolls over the sticky footer underlay with seamless edge */}
       <div
-        ref={newsletterStickyRef}
-        className="relative z-20 mx-2 overflow-hidden bg-[#030303] px-5 pb-8 text-white will-change-transform"
+        className="relative z-10 w-full bg-[var(--bg)] px-2 -mt-[1px] pt-[1px] transition-colors duration-300"
       >
-        <div className="h-44 bg-[repeating-linear-gradient(90deg,#ffffff66_0px,#ffffff66_2px,transparent_2px,transparent_24px)] [mask-image:linear-gradient(black_0%,transparent_100%)] md:h-[280px]" />
+        <div className="overflow-hidden rounded-t-[10px] bg-[#030303] px-5 pb-8 text-white">
+          <div className="h-44 bg-[repeating-linear-gradient(90deg,#ffffff66_0px,#ffffff66_2px,transparent_2px,transparent_24px)] [mask-image:linear-gradient(black_0%,transparent_100%)] md:h-[280px]" />
         <div className="mx-auto grid max-w-[920px] items-center gap-8 py-12 md:grid-cols-[1fr_1.2fr_1fr]">
           <img
             src="/assets/ba62e.png"
@@ -101,8 +50,16 @@ export function FooterSection({ lenis }: FooterSectionProps) {
             className="hidden aspect-[283/258] rounded-[10px] object-cover md:block"
           />
           <div className="text-center">
-            <h2 className="text-[32px] leading-[41.6px] tracking-[-0.96px]">
-              <RevealLine>Join Our Weekly Newsletter!</RevealLine>
+            <h2 className="text-[32px] font-medium leading-[41.6px] tracking-[-0.96px]">
+              <RevealLine className="block text-gradient-white-to-black">
+                Join Our Weekly
+              </RevealLine>
+              <RevealLine
+                delay={0.1}
+                className="block text-gradient-white-to-black"
+              >
+                Newsletter!
+              </RevealLine>
             </h2>
             <form
               className="relative mt-5"
@@ -142,7 +99,7 @@ export function FooterSection({ lenis }: FooterSectionProps) {
             className="hidden aspect-[283/258] rounded-[10px] object-cover md:block"
           />
         </div>
-        <div className="mb-4 flex h-10 items-center overflow-hidden rounded-[10px] bg-white text-[14px] leading-[18.4px] tracking-[-0.42px] text-[#030303]">
+          <div className="mb-4 flex h-10 items-center overflow-hidden rounded-[10px] bg-white text-[14px] leading-[18.4px] tracking-[-0.54px] text-[#030303]">
           <div className="w-full overflow-hidden [mask-image:linear-gradient(to_right,transparent_0%,black_10%,black_90%,transparent_100%)]">
             <div
               ref={marqueeRef}
@@ -180,14 +137,14 @@ export function FooterSection({ lenis }: FooterSectionProps) {
               ))}
             </div>
           </div>
+          </div>
         </div>
       </div>
 
-      {/* Revealed Footer Bottom: OFST logo and directory links */}
-      <footer className="relative z-10 w-full overflow-hidden bg-transparent">
+      {/* Native sticky underlay: no transform or scroll handler required. */}
+      <footer className="sticky bottom-0 -z-10 flex h-[90svh] w-full flex-col overflow-hidden">
         <div
-          ref={footerBottomRef}
-          className="mx-2 flex min-h-[min(650px,90vh)] flex-col justify-between bg-[#030303] px-5 pb-8 pt-10 text-white will-change-transform [backface-visibility:hidden]"
+          className="mx-2 flex h-full flex-col justify-between bg-[#030303] px-5 pb-8 pt-10 text-white"
         >
           <div className="flex flex-1 items-center justify-center py-6 sm:py-10">
             <img
@@ -209,7 +166,22 @@ export function FooterSection({ lenis }: FooterSectionProps) {
                   <a
                     key={label}
                     href={`#${label.toLowerCase()}`}
-                    className="group flex min-h-[35px] items-center justify-between gap-3 rounded-[10px] bg-[#f2f2f2] px-2 py-[7px] text-[16px] leading-[19px] tracking-[-0.48px] transition-[background-color,transform] duration-150 active:scale-[0.98] hover:bg-[#e6e6e6]"
+                    onClick={(e) => {
+                      if (label === "About" && onNavigateAbout) {
+                        e.preventDefault()
+                        onNavigateAbout()
+                      } else if (label === "Contact" && onNavigateContact) {
+                        e.preventDefault()
+                        onNavigateContact()
+                      } else if (label === "Home" && onNavigateHome) {
+                        e.preventDefault()
+                        onNavigateHome()
+                      } else if (label === "Work" && onNavigateProjects) {
+                        e.preventDefault()
+                        onNavigateProjects()
+                      }
+                    }}
+                    className="group flex min-h-[35px] items-center justify-between gap-3 rounded-[10px] bg-[#f2f2f2] px-2 py-[7px] text-[16px] leading-[19px] tracking-[-0.54px] transition-[background-color,transform] duration-150 active:scale-[0.98] hover:bg-[#e6e6e6] cursor-pointer"
                   >
                     {label}
                     <span
@@ -245,14 +217,22 @@ export function FooterSection({ lenis }: FooterSectionProps) {
             </p>
             <a
               href="#home"
-              className="order-1 text-right hover:underline sm:order-3 sm:text-right"
+              onClick={(e) => {
+                e.preventDefault()
+                if (lenis) {
+                  lenis.scrollTo(0)
+                } else {
+                  window.scrollTo({ top: 0, behavior: "smooth" })
+                }
+              }}
+              className="order-1 text-right hover:underline sm:order-3 sm:text-right cursor-pointer"
             >
               Back to top ↑
             </a>
           </div>
         </div>
       </footer>
-    </div>
+    </>
   )
 }
 

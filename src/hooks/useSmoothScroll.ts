@@ -7,9 +7,10 @@ export function useSmoothScroll() {
 
   useEffect(() => {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)")
+    const coarsePointer = window.matchMedia("(pointer: coarse)")
 
     const initLenis = () => {
-      if (reducedMotion.matches) {
+      if (reducedMotion.matches || coarsePointer.matches) {
         setLenis(null)
         return
       }

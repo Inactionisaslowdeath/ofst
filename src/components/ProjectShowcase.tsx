@@ -2,7 +2,11 @@ import { useEffect, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import type { ProjectItem } from "../data/content"
 
-import { Counter, RevealLine } from "./ui/MotionPrimitives"
+import {
+  Counter,
+  RevealLine,
+  AdaptiveRevealParagraph,
+} from "./ui/MotionPrimitives"
 
 export interface ProjectShowcaseProps {
   projects: ProjectItem[]
@@ -34,11 +38,20 @@ export function ProjectShowcase({
 
   return (
     <section id="projects" className="scroll-mt-20 pt-10">
-      <h2 className="mb-5 text-[40px] leading-[46.4px] tracking-[-2px]">
-        <RevealLine className="block">Selected Work</RevealLine>
-        <RevealLine delay={0.1} className="block text-[#696969]">
-          Made with Intent.
-        </RevealLine>
+      <h2 className="mb-5 text-[40px] leading-[46.4px] tracking-tight-display">
+        <div className="block">
+          <RevealLine className="inline-block text-gradient-black-to-white">
+            Selected Work
+          </RevealLine>
+        </div>
+        <div className="block">
+          <RevealLine
+            delay={0.1}
+            className="inline-block text-gradient-gray-to-white"
+          >
+            Made with Intent.
+          </RevealLine>
+        </div>
       </h2>
 
       <div className="grid min-h-[500px] grid-cols-1 items-end gap-2 rounded-[10px] bg-[#030303] px-4 pb-4 pt-[10%] text-white dark:bg-white dark:text-[#030303] md:min-h-[min(65vw,991px)] md:grid-cols-2">
@@ -78,38 +91,42 @@ export function ProjectShowcase({
         </div>
       </div>
 
-      <p className="ml-auto mt-20 w-full max-w-[1040px] text-[30px] leading-[1.16] tracking-[-1.5px] [container-type:inline-size] md:text-[40px] md:tracking-[-2px]">
-        <RevealLine
-          delay={0.05}
-          className="md:block md:text-right md:text-[min(40px,3.75cqw)] md:whitespace-nowrap"
-        >
-          We build distinctive brands and digital experiences around
-        </RevealLine>{" "}
-        <RevealLine
-          delay={0.15}
-          className="md:block md:text-left md:text-[min(40px,3.75cqw)] md:whitespace-nowrap"
-        >
-          a clear idea and a real purpose. Explore a selection of concepts
-        </RevealLine>{" "}
-        <RevealLine
-          delay={0.25}
-          className="md:block md:text-left md:text-[min(40px,3.75cqw)]"
-        >
-          and design explorations from the OFST studio.
-        </RevealLine>
-      </p>
+      <AdaptiveRevealParagraph
+        containerClassName="ml-auto mt-20 w-full max-w-[1040px] text-[30px] leading-[1.16] tracking-tight-statement [container-type:inline-size] md:text-[40px] md:tracking-tight-display"
+        baseDelay={0.05}
+        lines={[
+          {
+            text: "We build distinctive brands and digital experiences around",
+            desktopClassName:
+              "block md:text-right md:text-[min(40px,3.75cqw)] md:whitespace-nowrap",
+          },
+          {
+            text: "a clear idea and a real purpose. Explore a selection of concepts",
+            desktopClassName:
+              "block md:text-left md:text-[min(40px,3.75cqw)] md:whitespace-nowrap",
+          },
+          {
+            text: "and design explorations from the OFST studio.",
+            desktopClassName: "block md:text-left md:text-[min(40px,3.75cqw)]",
+          },
+        ]}
+      />
 
-      <div className="grid grid-cols-3 gap-5 py-20 md:py-28 -translate-x-[7px]">
+      <div className="grid grid-cols-3 gap-2 sm:gap-5 py-20 md:py-28 md:-translate-x-[7px]">
         {[
           { val: 8, suffix: "+", label: "Crafting Experiences" },
           { val: 50, suffix: "+", label: "Projects Delivered" },
           { val: 20, suffix: "+", label: "Clients Worldwide" },
         ].map(({ val, suffix, label }, index) => (
           <div key={label} className="text-center">
-            <p className="text-[55px] font-semibold leading-[1.65] tracking-[-5px] tabular-nums md:text-[90px] md:tracking-[-10px]">
-              <Counter target={val} suffix={suffix} />
+            <p className="text-[55px] font-semibold leading-[1.65] tracking-tight-hero tabular-nums md:text-[90px]">
+              <Counter
+                target={val}
+                suffix={suffix}
+                className="number-gradient-180"
+              />
             </p>
-            <p className="mt-3 text-[12px] tracking-[-0.4px] md:text-[20px]">
+            <p className="mt-3 text-[12px] tracking-[-0.54px] md:text-[20px]">
               <RevealLine delay={0.15 + index * 0.08}>{label}</RevealLine>
             </p>
           </div>

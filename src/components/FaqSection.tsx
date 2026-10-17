@@ -11,11 +11,20 @@ export function FaqSection() {
       id="faq"
       className="grid gap-x-12 gap-y-[60px] py-14 md:grid-cols-2 md:py-16"
     >
-      <h2 className="text-[40px] leading-[46.4px] tracking-[-2px] md:col-span-2">
-        <RevealLine className="block">Questions</RevealLine>
-        <RevealLine delay={0.1} className="block text-[#696969]">
-          Clear Answers.
-        </RevealLine>
+      <h2 className="text-[40px] leading-[46.4px] tracking-tight-display md:col-span-2">
+        <div className="block">
+          <RevealLine className="inline-block text-gradient-black-to-white">
+            Questions
+          </RevealLine>
+        </div>
+        <div className="block">
+          <RevealLine
+            delay={0.1}
+            className="inline-block text-gradient-gray-to-white"
+          >
+            Clear Answers.
+          </RevealLine>
+        </div>
       </h2>
       <div>
         {FAQ_QUESTIONS.map(({ question, answer }, index) => {
@@ -26,7 +35,7 @@ export function FaqSection() {
                 type="button"
                 onClick={() => setOpenQuestion(isOpen ? null : index)}
                 aria-expanded={isOpen}
-                className="flex w-full cursor-pointer list-none items-center justify-between gap-5 text-left text-[16px] tracking-[-0.48px] text-[#030303] dark:text-white"
+                className="flex w-full cursor-pointer list-none items-center justify-between gap-5 text-left text-[16px] tracking-[-0.54px] text-[#030303] dark:text-white"
               >
                 <span>{question}</span>
                 <motion.img
@@ -56,18 +65,25 @@ export function FaqSection() {
         })}
       </div>
       <div className="flex flex-col items-center text-center md:-translate-y-1">
-        <p className="text-[40px] leading-[46.4px] tracking-[-2px]">
+        <div className="text-[40px] leading-[46.4px] tracking-tight-display flex flex-col items-center">
           <RevealLine className="block">
-            <span className="max-md:block">Have a project </span>
-            <span className="max-md:block">in mind?</span>
+            <span className="inline-block md:inline text-gradient-black-to-white pr-1">
+              Have a project&nbsp;
+            </span>
+            <span className="inline-block md:inline text-gradient-black-to-white pr-2">
+              in mind?
+            </span>
           </RevealLine>
-          <RevealLine delay={0.1} className="block">
+          <RevealLine
+            delay={0.1}
+            className="block text-gradient-black-to-white pr-2"
+          >
             Tell us about it.
           </RevealLine>
-        </p>
+        </div>
         <a
           href="mailto:hello@OFST.com"
-          className="mt-6 inline-block rounded-[10px] bg-[#f2f2f2] px-3 py-3 text-[20px] leading-[20px] tracking-[-0.8px] text-[#696969] transition-[background-color,transform] duration-150 active:scale-[0.97] hover:bg-[#e6e6e6]"
+          className="mt-6 inline-block rounded-[10px] bg-[#f2f2f2] px-3 py-3 text-[20px] leading-[20px] tracking-[-0.54px] text-[#696969] transition-[background-color,transform] duration-150 active:scale-[0.97] hover:bg-[#e6e6e6]"
         >
           hello@OFST.com
         </a>

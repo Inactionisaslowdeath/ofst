@@ -3,8 +3,15 @@ import { Counter, RevealLine } from "./ui/MotionPrimitives"
 export function MetricsSection() {
   return (
     <section className="py-16 md:py-24">
-      <h2 className="mb-14 text-center text-[30px] leading-[1.16] tracking-[-1.5px] md:text-[40px] md:leading-[46.4px] md:tracking-[-2px]">
-        <RevealLine>Why OFST and not any other design studio?</RevealLine>
+      <h2 className="mb-14 text-center text-[30px] leading-[1.16] tracking-tight-statement md:text-[40px] md:leading-[46.4px] md:tracking-tight-display">
+        <RevealLine className="inline-block text-center">
+          <span className="inline-block text-gradient-black-to-white">
+            Why OFST and not any&nbsp;
+          </span>
+          <span className="inline-block text-gradient-black-to-white">
+            other design studio?
+          </span>
+        </RevealLine>
       </h2>
       <div className="mx-auto grid max-w-[1480px] gap-5 xl:grid-cols-[1.55fr_1fr]">
         <div className="grid min-w-0 grid-cols-2 content-start gap-5">
@@ -42,7 +49,7 @@ export function MetricsSection() {
             </div>
           </div>
           <div className="col-span-2 flex aspect-auto sm:aspect-[888/530] min-h-0 w-full max-w-full flex-col items-center justify-center gap-6 sm:gap-9 rounded-[10px] bg-[#f2f2f2] p-4 sm:p-6 text-[#030303] md:gap-[clamp(20px,3vw,45px)] overflow-hidden">
-            <h3 className="text-center text-[24px] sm:text-[32px] leading-tight sm:leading-[41.6px] tracking-[-0.96px] text-[#030303]">
+            <h3 className="text-center text-[24px] sm:text-[32px] leading-tight sm:leading-[41.6px] tracking-[-0.54px] text-[#030303]">
               <RevealLine className="block text-[#030303]">
                 Engagement
               </RevealLine>
@@ -105,7 +112,7 @@ export function MetricsSection() {
                   <p className="text-[#030303]">
                     <RevealLine delay={0.08 * index}>{label}</RevealLine>
                   </p>
-                  <p className="mt-2 text-[32px] leading-[41.6px] tracking-[-0.96px] text-[#030303]">
+                  <p className="mt-2 text-[32px] leading-[41.6px] tracking-[-0.54px] text-[#030303]">
                     <Counter target={value} />
                   </p>
                 </div>
@@ -138,7 +145,7 @@ export function MetricsSection() {
                 ),
               )}
             </div>
-            <p className="text-[14px] tracking-[-0.42px] text-[#030303] lg:text-[16px]">
+            <p className="text-[14px] tracking-[-0.54px] text-[#030303] lg:text-[16px]">
               <Counter target={100} suffix="+ " />
               <RevealLine delay={0.1}>Satisfied Clients</RevealLine>
             </p>

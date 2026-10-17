@@ -1,4 +1,4 @@
-import { RevealLine, RevealBlock } from "./ui/MotionPrimitives"
+import { RevealBlock, AdaptiveRevealParagraph } from "./ui/MotionPrimitives"
 
 export function AboutSection() {
   return (
@@ -20,27 +20,27 @@ export function AboutSection() {
           />
         ))}
       </RevealBlock>
-      <p className="w-full max-w-[1040px] text-[30px] leading-[1.16] tracking-[-1.5px] [container-type:inline-size] md:text-[40px] md:tracking-[-2px]">
-        <RevealLine
-          delay={0.05}
-          className="md:block md:text-right md:text-[min(40px,3.75cqw)] md:whitespace-nowrap"
-        >
-          <span className="text-[#696969]">At OFST,</span> we bring strategy,
-          design, and technology together
-        </RevealLine>{" "}
-        <RevealLine
-          delay={0.15}
-          className="md:block md:text-left md:text-[min(40px,3.75cqw)] md:whitespace-nowrap"
-        >
-          to make digital experiences clear, distinctive, and useful. We
-        </RevealLine>{" "}
-        <RevealLine
-          delay={0.25}
-          className="md:block md:text-left md:text-[min(40px,3.75cqw)]"
-        >
-          believe the best work makes every detail count.
-        </RevealLine>
-      </p>
+      <AdaptiveRevealParagraph
+        containerClassName="w-full max-w-[1040px] text-[30px] leading-[1.16] tracking-tight-statement [container-type:inline-size] md:text-[40px] md:tracking-tight-display"
+        baseDelay={0.05}
+        lines={[
+          {
+            prefix: <span className="text-[#696969]">At OFST,</span>,
+            text: "we bring strategy, design, and technology together",
+            desktopClassName:
+              "block md:text-right md:text-[min(40px,3.75cqw)] md:whitespace-nowrap",
+          },
+          {
+            text: "to make digital experiences clear, distinctive, and useful.",
+            desktopClassName:
+              "block md:text-left md:text-[min(40px,3.75cqw)] md:whitespace-nowrap",
+          },
+          {
+            text: "We believe the best work makes every detail count.",
+            desktopClassName: "block md:text-left md:text-[min(40px,3.75cqw)]",
+          },
+        ]}
+      />
     </section>
   )
 }

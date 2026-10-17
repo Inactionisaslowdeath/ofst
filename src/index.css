@@ -4,9 +4,27 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @font-face {
-  font-family: "Geist:Medium";
+  font-family: "Geist";
   src: url("https://static.figma.com/font/Geist_wght__1") format("woff2");
   font-weight: 500;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Inter";
+  src: url("https://static.figma.com/font/Inter_1") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Inter";
+  src: url("https://static.figma.com/font/Inter_1") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Inter";
+  src: url("https://static.figma.com/font/Inter_1") format("woff2");
+  font-weight: 600;
   font-style: normal;
 }
 @font-face {
@@ -29,7 +47,8 @@
 }
 
 @theme {
-  --font-sans: "Inter:Regular", "Inter", sans-serif;
+  --font-sans: "Inter", "Inter:Regular", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --tracking-normal: -0.54px;
   --color-background: var(--bg);
   --color-foreground: var(--fg);
   --color-border: var(--border);
@@ -54,24 +73,210 @@ html.dark {
 }
 
 @layer base {
-  html {
-    overflow-x: hidden;
-  }
   html.lenis,
   html.lenis-smooth {
     scroll-behavior: auto !important;
   }
   body {
-    overflow-x: hidden;
     max-width: 100vw;
-    font-family: "Inter", sans-serif;
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    line-height: 19.8px;
+    letter-spacing: -0.54px;
     background-color: var(--bg);
     color: var(--fg);
     transition: background-color 0.3s ease, color 0.3s ease;
   }
+  *, *::before, *::after {
+    letter-spacing: -0.54px;
+  }
   button, summary, a, input, textarea { -webkit-tap-highlight-color: transparent; }
   button { cursor: pointer; }
   :focus-visible { outline: 2px solid #737373; outline-offset: 4px; }
+}
+
+/*
+  =============================================================================
+  INDUSTRY STANDARD UNIVERSAL TYPOGRAPHIC TRACKING & OPTICAL SCALING
+  =============================================================================
+  1. Universal Inheritance:
+     All elements inherit letter-spacing by default from their parent container.
+     This ensures <span>, <motion.span>, <a>, <strong>, etc. never clobber parent tracking.
+*/
+*, *::before, *::after {
+  letter-spacing: inherit;
+}
+
+/* Base default tracking for document root & body (-0.54px) */
+html, body {
+  letter-spacing: -0.54px;
+}
+
+/*
+  2. Universal Bigger Text Optical Tracking:
+     In professional design systems (Apple HIG, Tailwind, Framer, Emil Kowalski),
+     large text naturally uses negative tracking (relative `em` or targeted `px`)
+     so that ANY heading or display text automatically tightens in proportion to size.
+     Tighter values calibrated for Inter display type:
+*/
+
+/* Hero / Massive Display (>= 50px) */
+h1,
+.text-display-hero,
+.tracking-tight-hero,
+[class*="text-[46px]"],
+[class*="text-[52px]"],
+[class*="text-[55px]"],
+[class*="text-[90px]"],
+[class*="md:text-[90px]"] {
+  letter-spacing: -3px !important;
+}
+
+/* Headings & Large Statements (36px - 48px) */
+h2,
+.text-display-lg,
+.tracking-tight-display,
+[class*="text-[40px]"],
+[class*="md:text-[40px]"],
+[class*="leading-[46.4px]"] {
+  letter-spacing: -3.2px !important;
+}
+
+/* Medium Headings & Sub-statements (26px - 35px) */
+h3,
+.text-display-md,
+.tracking-tight-statement,
+[class*="text-[30px]"],
+[class*="text-[32px]"],
+[class*="leading-[41.6px]"] {
+  letter-spacing: -2.75px !important;
+}
+
+/* Small Subheadings / Section Labels (20px - 25px) */
+h4,
+.text-display-sm,
+[class*="text-[20px]"],
+[class*="text-[24px]"],
+[class*="md:text-[20px]"] {
+  letter-spacing: -1px !important;
+}
+
+/*
+  180° Linear Gradient for Display Metric Numbers (Black to White, 65/35 ratio)
+*/
+.number-gradient-180 {
+  background: linear-gradient(180deg, #000000 0%, #3a3a3a 50%, #ffffff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+  display: inline-block;
+  padding-right: 0.15em;
+  margin-right: -0.15em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  letter-spacing: -4px !important;
+}
+
+@media (min-width: 768px) {
+  .number-gradient-180 {
+    letter-spacing: -9.5px !important;
+    padding-right: 0.18em;
+    margin-right: -0.18em;
+  }
+}
+
+html.dark .number-gradient-180 {
+  background: linear-gradient(180deg, #ffffff 0%, #c4c4c4 50%, rgba(255, 255, 255, 0.12) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/*
+  180° Linear Gradient for Process Section Titles (White to Black, 65/35 ratio)
+*/
+.process-title-gradient {
+  background: linear-gradient(180deg, #ffffff 0%, #b0b0b0 50%, #000000 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+  display: inline-block;
+}
+
+html.dark .process-title-gradient {
+  background: linear-gradient(180deg, #000000 0%, #4a4a4a 50%, #ffffff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/*
+  180° Linear Gradient for Black-to-White Headings (65/35 ratio)
+*/
+.text-gradient-black-to-white {
+  background: linear-gradient(180deg, #000000 0%, #3a3a3a 50%, #ffffff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+  padding-right: 0.1em;
+  margin-right: -0.1em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+html.dark .text-gradient-black-to-white {
+  background: linear-gradient(180deg, #ffffff 0%, #c4c4c4 50%, rgba(255, 255, 255, 0.15) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/*
+  180° Linear Gradient for Gray-to-White Headings (65/35 ratio)
+  Top: Gray (#696969) -> Bottom: White (#ffffff)
+*/
+.text-gradient-gray-to-white {
+  background: linear-gradient(180deg, #696969 0%, #999999 50%, #ffffff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+  padding-right: 0.1em;
+  margin-right: -0.1em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+html.dark .text-gradient-gray-to-white {
+  background: linear-gradient(180deg, #a1a1aa 0%, #71717a 50%, #27272a 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/*
+  180° Linear Gradient for Pure White Texts on dark backgrounds (White to Black, 65/35 ratio)
+  Top: White (#ffffff) -> Bottom: Black (#000000)
+*/
+.text-gradient-white-to-black {
+  background: linear-gradient(180deg, #ffffff 0%, #b0b0b0 50%, #000000 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+  padding-right: 0.1em;
+  margin-right: -0.1em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+html.dark .text-gradient-white-to-black {
+  background: linear-gradient(180deg, #000000 0%, #4a4a4a 50%, #ffffff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -122,7 +327,7 @@ html.dark {
   right: 0;
   top: 0;
   height: 120px;
-  z-index: 30;
+  z-index: 20;
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   mask-image: linear-gradient(to top, transparent 0%, rgba(0,0,0,0.4) 35%, rgba(0,0,0,0.85) 70%, black 100%);
@@ -154,6 +359,31 @@ html.dark {
     color-mix(in srgb, var(--bg) 97%, transparent) 95%,
     var(--bg) 100%
   );
+}
+
+@media (max-width: 767px) {
+  .hero-scroll-source {
+    view-timeline-name: --hero-scroll;
+    view-timeline-axis: block;
+  }
+
+  @supports (animation-timeline: view()) {
+    .hero-bottom-fade {
+      animation: hero-bottom-fade-out linear both;
+      animation-timeline: --hero-scroll;
+      animation-range: exit 0% exit 24%;
+      transition: none;
+    }
+  }
+}
+
+@keyframes hero-bottom-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
 }
 
 @media (min-width: 640px) {
@@ -193,6 +423,7 @@ html.dark {
   );
 }
 
+
 @media (min-width: 640px) {
   .hero-gallery-fade {
     height: 460px;
@@ -205,8 +436,15 @@ html.dark {
   }
 }
 
-
-
-
-
-
+/*
+  Partner Logo Sliding Animation
+  Curve: starts slow, accelerates through the middle, finishes slow: cubic-bezier(0.77, 0, 0.175, 1)
+*/
+@keyframes partner-logo-slide {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
