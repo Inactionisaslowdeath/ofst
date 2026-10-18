@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from "vitest"
 import { render, screen, fireEvent } from "@testing-library/react"
 import ProjectDetailPage from "./ProjectDetailPage"
+import type { ProjectItem } from "../data/content"
 
 describe("ProjectDetailPage", () => {
   it("renders the null.al title, metadata, and back button", () => {
@@ -35,7 +36,7 @@ describe("ProjectDetailPage", () => {
   })
 
   it("renders custom project details when project prop is provided", () => {
-    const customProject = {
+    const customProject: ProjectItem = {
       id: 0,
       name: "void®",
       image: "e3bbf.png",
@@ -66,9 +67,7 @@ describe("ProjectDetailPage", () => {
       },
     }
 
-    render(
-      <ProjectDetailPage onBack={vi.fn()} project={customProject as any} />,
-    )
+    render(<ProjectDetailPage onBack={vi.fn()} project={customProject} />)
     expect(screen.getByRole("heading", { name: "void®" })).toBeDefined()
     expect(screen.getByText("void Labs")).toBeDefined()
     expect(screen.getByText("2024")).toBeDefined()

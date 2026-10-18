@@ -1,10 +1,18 @@
 {
-  "description": "Create and customize professional websites effortlessly with intuitive tools designed for businesses and individuals seeking a strong online presence.",
+  "title": "OFST — Independent Creative Studio",
+  "description": "OFST is an independent creative studio crafting distinctive brand identities, digital experiences, and physical installations.",
+  "language": "en",
+  "icons": {
+    "icon": "/OFST-blk-trans.svg"
+  },
+  "openGraph": {
+    "image": "/assets/ad136.png"
+  },
   "robots": {
-    "index": false
+    "index": true
   },
   "accessibility": {
-    "addBypassLinks": false,
+    "addBypassLinks": true,
     "ignoreReducedMotion": false
   }
 }

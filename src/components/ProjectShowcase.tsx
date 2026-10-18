@@ -63,7 +63,7 @@ export function ProjectShowcase({
           <img
             src={`/assets/${projects[0].image}`}
             alt={projects[0].alt || projects[0].name}
-            className="aspect-[738/781] w-full rounded-[5px] object-cover transition-opacity duration-200 group-hover:opacity-85"
+            className="aspect-[738/781] w-full rounded-[5px] object-cover transition-opacity duration-200 @media(hover:hover):group-hover:opacity-85"
           />
           <span className="mt-2 block text-[12px] text-white dark:text-[#030303]">
             {projects[0].name}
@@ -81,7 +81,7 @@ export function ProjectShowcase({
               <img
                 src={`/assets/${item.image}`}
                 alt={item.name}
-                className="aspect-[243/257] w-full rounded-[5px] object-cover transition-opacity duration-200 group-hover:opacity-85"
+                className="aspect-[243/257] w-full rounded-[5px] object-cover transition-opacity duration-200 @media(hover:hover):group-hover:opacity-85"
               />
               <span className="mt-2 block text-[12px] text-white dark:text-[#030303]">
                 {item.name}

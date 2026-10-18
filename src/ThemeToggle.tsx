@@ -26,7 +26,7 @@ interface Animation {
   css: string
 }
 
-const getClipPathPosition = (position: AnimationStart) => {
+const getClipPathPosition = (position: AnimationStart): string => {
   switch (position) {
     case "top-left":
       return "0% 0%"
@@ -37,11 +37,21 @@ const getClipPathPosition = (position: AnimationStart) => {
     case "bottom-right":
       return "100% 100%"
     case "top-center":
+    case "top-down":
       return "50% 0%"
     case "bottom-center":
+    case "bottom-up":
       return "50% 100%"
-    default:
+    case "left-right":
+      return "0% 50%"
+    case "right-left":
+      return "100% 50%"
+    case "center":
       return "50% 50%"
+    default: {
+      const _exhaustiveCheck: never = position
+      return _exhaustiveCheck
+    }
   }
 }
 

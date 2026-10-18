@@ -26,10 +26,7 @@ export function ServicesSection() {
         {/* 4 service cards wrapped completely inside the extended bottom */}
         <div className="-mx-5 space-y-3 pt-6 pb-2 md:pt-10 md:pb-4">
           {SERVICES.map(({ name, image }, index) => (
-            <div
-              key={name}
-              className="grid w-full grid-cols-2 gap-2"
-            >
+            <div key={name} className="grid w-full grid-cols-2 gap-2">
               <div className="flex aspect-[679/450] items-center justify-center rounded-[9px] bg-[#f2f2f2] text-center text-[14.4px] tracking-[-0.54px] text-[#030303]">
                 <RevealLine delay={0.06 * (index % 3)}>{name}</RevealLine>
               </div>

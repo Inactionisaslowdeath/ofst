@@ -1,3 +1,8 @@
+export interface ProjectCard {
+  src: string
+  alt: string
+}
+
 export interface ProjectDetailData {
   title: string
   statement: string
@@ -8,7 +13,7 @@ export interface ProjectDetailData {
   whatIsAbout: string[]
   heroImage: string
   heroAlt: string
-  cards: { src: string; alt: string }[]
+  cards: ProjectCard[]
 }
 
 export interface ProjectItem {

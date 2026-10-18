@@ -56,12 +56,17 @@ Single-context (`GLOSSARY.md` + `docs/adr/` at repo root). See [domain.md](file:
 
 ### Engineering and Workflow Skills
 
-Workspace skills are configured in `.agents/skills/`. When writing code, debugging, or planning:
+Workspace skills are configured in `.agents/skills/`. Full directory and department taxonomy: [SKILLS_TAXONOMY.md](file:///c:/Users/user/Desktop/OFST/.agents/SKILLS_TAXONOMY.md).
+- **Universal Orchestrator**: Use `orchestrate` to plan, decompose, and drive any complex multi-step task, automatically binding the relevant 24 foundational principles and routing through departmental skills.
+- **Whole-Codebase Auditor**: Use `audit-codebase` to systematically assess repository health across all 11 departments and 24 foundational principles.
 - Use `tdd` for test-driven development and feature slicing.
-- Use `diagnosing-bugs` when troubleshooting and fixing hard bugs or regressions.
-- Use `code-review` before finalizing or submitting code changes.
-- Use `codebase-design` and `domain-modeling` when designing architecture, interfaces, and terms.
+- Use `diagnosing-bugs` and `figure-it-out` when troubleshooting and fixing hard bugs or regressions.
+- Use `code-review` and `thermo-nuclear-code-quality-review` before finalizing or submitting code changes.
+- Use `codebase-design`, `architect`, and `domain-modeling` when designing architecture, interfaces, and terms.
 - Use `grill-me` or `grill-with-docs` for upfront alignment and design clarification.
+- Use `ponytail`, `ponytail-debt`, and `ponytail-gain` when analyzing technical debt and refactoring ROI.
+- Use `typescript-best-practices` and `check-compiler-errors` for strict type correctness and compiler diagnostics.
+- Use `deslop` and `unslop` to ensure clean, lean, high-density code and prose.
 
 ### Design, UI/UX & Motion Directives (MANDATORY)
 

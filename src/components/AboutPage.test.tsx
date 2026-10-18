@@ -59,9 +59,7 @@ describe("AboutPage", () => {
     )
 
     expect(screen.getByText(/we don’t follow trends\./i)).toBeDefined()
-    expect(
-      screen.getByText(/we build what feels inevitable\./i),
-    ).toBeDefined()
+    expect(screen.getByText(/we build what feels inevitable\./i)).toBeDefined()
     expect(screen.queryByText(/— philosophy —/i)).toBeNull()
     expect(
       screen.getByText(
@@ -107,9 +105,7 @@ describe("AboutPage", () => {
       ),
     ).toBeDefined()
     expect(
-      screen.getByText(
-        /and design explorations from the ofst studio\./i,
-      ),
+      screen.getByText(/and design explorations from the ofst studio\./i),
     ).toBeDefined()
     expect(screen.getAllByText(/crafting experiences/i).length).toBeGreaterThan(
       0,
@@ -137,9 +133,13 @@ describe("AboutPage", () => {
     expect(screen.getAllByText("Creative Direction").length).toBeGreaterThan(0)
     expect(screen.getAllByText("Interactive Systems").length).toBeGreaterThan(0)
     expect(screen.getAllByText("Prototyping").length).toBeGreaterThan(0)
-    expect(screen.getAllByText("Editorial & Typography").length).toBeGreaterThan(0)
+    expect(
+      screen.getAllByText("Editorial & Typography").length,
+    ).toBeGreaterThan(0)
     expect(screen.getAllByText("Spatial & 3D Design").length).toBeGreaterThan(0)
-    expect(screen.getAllByText("Production & Art Direction").length).toBeGreaterThan(0)
+    expect(
+      screen.getAllByText("Production & Art Direction").length,
+    ).toBeGreaterThan(0)
   })
 
   it("renders existing FAQ and Footer sections", () => {

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react"
+import { lazy, Suspense, useEffect, useRef, useState } from "react"
 import ParallaxGallery from "./components/ParallaxGallery"
 import StickyNavigation from "./components/StickyNavigation"
 import ProjectShowcase from "./components/ProjectShowcase"
@@ -12,10 +12,10 @@ import FaqSection from "./components/FaqSection"
 import ContactSection from "./components/ContactSection"
 import FooterSection from "./components/FooterSection"
 
-import ProjectDetailPage from "./components/ProjectDetailPage"
-import AllProjectsPage from "./components/AllProjectsPage"
-import ContactPage from "./components/ContactPage"
-import AboutPage from "./components/AboutPage"
+const ProjectDetailPage = lazy(() => import("./components/ProjectDetailPage"))
+const AllProjectsPage = lazy(() => import("./components/AllProjectsPage"))
+const ContactPage = lazy(() => import("./components/ContactPage"))
+const AboutPage = lazy(() => import("./components/AboutPage"))
 import { useSmoothScroll } from "./hooks/useSmoothScroll"
 import { PROJECTS } from "./data/content"
 
@@ -113,116 +113,124 @@ export default function App() {
   if (project !== null) {
     const currentProject = PROJECTS[project] ?? null
     return (
-      <ProjectDetailPage
-        project={currentProject}
-        onBack={() => {
-          setProject(null)
-          setShowCatalog(true)
-        }}
-        onNavigateHome={() => {
-          setProject(null)
-          setShowCatalog(false)
-          setShowContact(false)
-          setShowAbout(false)
-        }}
-        onNavigateContact={() => {
-          setProject(null)
-          setShowCatalog(false)
-          setShowAbout(false)
-          setShowContact(true)
-        }}
-        onNavigateAbout={() => {
-          setProject(null)
-          setShowCatalog(false)
-          setShowContact(false)
-          setShowAbout(true)
-        }}
-        lenis={lenisInstance}
-      />
+      <Suspense fallback={null}>
+        <ProjectDetailPage
+          project={currentProject}
+          onBack={() => {
+            setProject(null)
+            setShowCatalog(true)
+          }}
+          onNavigateHome={() => {
+            setProject(null)
+            setShowCatalog(false)
+            setShowContact(false)
+            setShowAbout(false)
+          }}
+          onNavigateContact={() => {
+            setProject(null)
+            setShowCatalog(false)
+            setShowAbout(false)
+            setShowContact(true)
+          }}
+          onNavigateAbout={() => {
+            setProject(null)
+            setShowCatalog(false)
+            setShowContact(false)
+            setShowAbout(true)
+          }}
+          lenis={lenisInstance}
+        />
+      </Suspense>
     )
   }
 
   // 2. Render All Projects catalog page when showCatalog is true
   if (showCatalog) {
     return (
-      <AllProjectsPage
-        onSelectProject={(id) => {
-          setProject(id)
-        }}
-        onNavigateHome={() => {
-          setShowCatalog(false)
-          setProject(null)
-          setShowContact(false)
-          setShowAbout(false)
-        }}
-        onNavigateContact={() => {
-          setProject(null)
-          setShowCatalog(false)
-          setShowAbout(false)
-          setShowContact(true)
-        }}
-        onNavigateAbout={() => {
-          setProject(null)
-          setShowCatalog(false)
-          setShowContact(false)
-          setShowAbout(true)
-        }}
-        lenis={lenisInstance}
-      />
+      <Suspense fallback={null}>
+        <AllProjectsPage
+          onSelectProject={(id) => {
+            setProject(id)
+          }}
+          onNavigateHome={() => {
+            setShowCatalog(false)
+            setProject(null)
+            setShowContact(false)
+            setShowAbout(false)
+          }}
+          onNavigateContact={() => {
+            setProject(null)
+            setShowCatalog(false)
+            setShowAbout(false)
+            setShowContact(true)
+          }}
+          onNavigateAbout={() => {
+            setProject(null)
+            setShowCatalog(false)
+            setShowContact(false)
+            setShowAbout(true)
+          }}
+          lenis={lenisInstance}
+        />
+      </Suspense>
     )
   }
 
   // 3. Render dedicated Contact page when showContact is true
   if (showContact) {
     return (
-      <ContactPage
-        onNavigateHome={() => {
-          setShowContact(false)
-          setShowCatalog(false)
-          setShowAbout(false)
-          setProject(null)
-        }}
-        onNavigateProjects={() => {
-          setShowContact(false)
-          setShowAbout(false)
-          setProject(null)
-          setShowCatalog(true)
-        }}
-        onNavigateAbout={() => {
-          setShowContact(false)
-          setProject(null)
-          setShowCatalog(false)
-          setShowAbout(true)
-        }}
-        lenis={lenisInstance}
-      />
+      <Suspense fallback={null}>
+        <ContactPage
+          onNavigateHome={() => {
+            setShowContact(false)
+            setShowCatalog(false)
+            setShowAbout(false)
+            setProject(null)
+          }}
+          onNavigateProjects={() => {
+            setShowContact(false)
+            setShowAbout(false)
+            setProject(null)
+            setShowCatalog(true)
+          }}
+          onNavigateAbout={() => {
+            setShowContact(false)
+            setProject(null)
+            setShowCatalog(false)
+            setShowAbout(true)
+          }}
+          lenis={lenisInstance}
+        />
+      </Suspense>
     )
   }
 
   // 4. Render dedicated About page when showAbout is true
   if (showAbout) {
     return (
-      <AboutPage
-        onNavigateHome={() => {
-          setShowAbout(false)
-          setShowContact(false)
-          setShowCatalog(false)
-          setProject(null)
-        }}
-        onNavigateProjects={() => {
-          setShowAbout(false)
-          setShowContact(false)
-          setProject(null)
-          setShowCatalog(true)
-        }}
-        onNavigateContact={() => {
-          setShowAbout(false)
-          setShowCatalog(false)
-          setProject(null)
-          setShowContact(true)
-        }}
-        lenis={lenisInstance}
-      />
+      <Suspense fallback={null}>
+        <AboutPage
+          onNavigateHome={() => {
+            setShowAbout(false)
+            setShowContact(false)
+            setShowCatalog(false)
+            setProject(null)
+          }}
+          onNavigateProjects={() => {
+            setShowAbout(false)
+            setShowContact(false)
+            setProject(null)
+            setShowCatalog(true)
+          }}
+          onNavigateContact={() => {
+            setShowAbout(false)
+            setShowCatalog(false)
+            setProject(null)
+            setShowContact(true)
+          }}
+          lenis={lenisInstance}
+        />
+      </Suspense>
     )
   }
 
@@ -256,43 +264,51 @@ export default function App() {
       <main className="relative z-10 w-full bg-[var(--bg)] transition-colors duration-300">
         <div className="mx-auto w-full max-w-[1560px] px-4 sm:px-5 md:px-10">
           {/* Hero Section with Parallax Effect */}
-          <section id="hero" ref={heroRef} className="hero-scroll-source relative w-full">
+          <section
+            id="hero"
+            ref={heroRef}
+            className="hero-scroll-source relative w-full"
+          >
             <ParallaxGallery lenis={lenisInstance} />
-            <div ref={heroFadeRef} aria-hidden="true" className="hero-bottom-fade" />
+            <div
+              ref={heroFadeRef}
+              aria-hidden="true"
+              className="hero-bottom-fade"
+            />
           </section>
 
-        {/* Partner Logos */}
-        <PartnerLogos />
+          {/* Partner Logos */}
+          <PartnerLogos />
 
-        {/* Studio Philosophy & Statement */}
-        <AboutSection />
+          {/* Studio Philosophy & Statement */}
+          <AboutSection />
 
-        {/* Portfolio Showcase Grid & Detail Modal */}
-        <ProjectShowcase
-          projects={PROJECTS}
-          activeProject={project}
-          setActiveProject={setProject}
-        />
+          {/* Portfolio Showcase Grid & Detail Modal */}
+          <ProjectShowcase
+            projects={PROJECTS}
+            activeProject={project}
+            setActiveProject={setProject}
+          />
 
-        {/* Services & Capabilities */}
-        <ServicesSection />
+          {/* Services & Capabilities */}
+          <ServicesSection />
 
-        {/* Interactive 5-Step Process Loop */}
-        <ProcessSection />
+          {/* Interactive 5-Step Process Loop */}
+          <ProcessSection />
 
-        {/* Collaborators & Testimonials */}
-        <TestimonialsSection />
+          {/* Collaborators & Testimonials */}
+          <TestimonialsSection />
 
-        {/* Metrics & Why OFST */}
-        <MetricsSection />
+          {/* Metrics & Why OFST */}
+          <MetricsSection />
 
-        {/* FAQ Accordion */}
-        <FaqSection />
+          {/* FAQ Accordion */}
+          <FaqSection />
 
-        {/* Contact Form with Bilateral Hand Convergence */}
-        <ContactSection lenis={lenisInstance} />
-      </div>
-    </main>
+          {/* Contact Form with Bilateral Hand Convergence */}
+          <ContactSection lenis={lenisInstance} />
+        </div>
+      </main>
 
       {/* Sticky Newsletter Curtain & Revealed Bottom Footer */}
       <FooterSection

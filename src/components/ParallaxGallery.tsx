@@ -1,4 +1,9 @@
-import { motion, useMotionValue, useTransform } from "framer-motion"
+import {
+  motion,
+  useMotionValue,
+  useTransform,
+  type MotionValue,
+} from "framer-motion"
 import { forwardRef, useEffect, useRef, useState } from "react"
 import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
@@ -41,7 +46,8 @@ export function ParallaxGallery({ lenis }: ParallaxGalleryProps) {
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(pointer: coarse)")
-    const updateScrollOwner = () => setUsesMobileScrollTrigger(mediaQuery.matches)
+    const updateScrollOwner = () =>
+      setUsesMobileScrollTrigger(mediaQuery.matches)
 
     updateScrollOwner()
     mediaQuery.addEventListener("change", updateScrollOwner)
@@ -142,45 +148,37 @@ export function ParallaxGallery({ lenis }: ParallaxGalleryProps) {
   useEffect(() => {
     if (!usesMobileScrollTrigger || !gallery.current) return
 
-    const visibleColumns = columns.current.slice(0, 2).filter(
-      (column): column is HTMLDivElement => column !== null,
-    )
+    const visibleColumns = columns.current
+      .slice(0, 2)
+      .filter((column): column is HTMLDivElement => column !== null)
     if (visibleColumns.length !== 2) return
 
     ScrollTrigger.config({ ignoreMobileResize: true })
     ScrollTrigger.normalizeScroll(true)
 
     const context = gsap.context(() => {
-      gsap.fromTo(
-        visibleColumns[0],
-        { yPercent: 0 },
-        {
-          yPercent: 114.3,
-          ease: "none",
-          scrollTrigger: {
-            trigger: gallery.current,
-            start: "top bottom",
-            end: "bottom top",
-            scrub: true,
-            invalidateOnRefresh: true,
-          },
+      gsap.fromTo(visibleColumns[0], { yPercent: 0 }, {
+        yPercent: 114.3,
+        ease: "none",
+        scrollTrigger: {
+          trigger: gallery.current,
+          start: "top bottom",
+          end: "bottom top",
+          scrub: true,
+          invalidateOnRefresh: true,
         },
-      )
-      gsap.fromTo(
-        visibleColumns[1],
-        { yPercent: 0 },
-        {
-          yPercent: 188.6,
-          ease: "none",
-          scrollTrigger: {
-            trigger: gallery.current,
-            start: "top bottom",
-            end: "bottom top",
-            scrub: true,
-            invalidateOnRefresh: true,
-          },
+      })
+      gsap.fromTo(visibleColumns[1], { yPercent: 0 }, {
+        yPercent: 188.6,
+        ease: "none",
+        scrollTrigger: {
+          trigger: gallery.current,
+          start: "top bottom",
+          end: "bottom top",
+          scrub: true,
+          invalidateOnRefresh: true,
         },
-      )
+      })
     }, gallery)
 
     ScrollTrigger.refresh(true)
@@ -241,7 +239,7 @@ export function ParallaxGallery({ lenis }: ParallaxGalleryProps) {
 
 interface GalleryColumnProps {
   images: string[]
-  y: import("framer-motion").MotionValue<number>
+  y: MotionValue<number>
   usesMobileScrollTrigger: boolean
   className?: string
 }
@@ -255,24 +253,25 @@ const GalleryColumn = forwardRef<HTMLDivElement, GalleryColumnProps>(
       <motion.div
         ref={ref}
         className={`relative -top-[45%] flex h-full flex-1 w-full flex-col gap-[2vw] first:top-[-45%] [&:nth-child(2)]:top-[-75%] [&:nth-child(3)]:top-[-45%] [&:nth-child(4)]:top-[-75%] will-change-transform [backface-visibility:hidden] ${className}`}
-        style={usesMobileScrollTrigger ? undefined : ({ y } as any)}
+        style={usesMobileScrollTrigger ? undefined : { y }}
       >
-      {images.map((src, i) => (
-        <div
-          key={i}
-          className={`relative w-full shrink-0 overflow-hidden rounded-[10px] aspect-[2/3] min-h-[260px] sm:aspect-[2/3] sm:min-h-[380px] ${
-            i === 3 ? "flex sm:hidden" : ""
-          }`}
-        >
-          <img
-            src={src}
-            alt="Showcase gallery item"
-            className="pointer-events-none h-full w-full rounded-[10px] object-cover"
-          />
-        </div>
-      ))}
-    </motion.div>
-  )
-})
+        {images.map((src, i) => (
+          <div
+            key={i}
+            className={`relative w-full shrink-0 overflow-hidden rounded-[10px] aspect-[2/3] min-h-[260px] sm:aspect-[2/3] sm:min-h-[380px] ${
+              i === 3 ? "flex sm:hidden" : ""
+            }`}
+          >
+            <img
+              src={src}
+              alt="Showcase gallery item"
+              className="pointer-events-none h-full w-full rounded-[10px] object-cover"
+            />
+          </div>
+        ))}
+      </motion.div>
+    )
+  },
+)
 
 export default ParallaxGallery
