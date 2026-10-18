@@ -30,10 +30,11 @@ export default function App() {
 
   // Hero bottom fade scroll progress calculation
   useEffect(() => {
-    const usesMobileViewTimeline =
-      window.matchMedia("(max-width: 767px)").matches &&
+    const usesNativeViewTimeline =
+      typeof CSS !== "undefined" &&
+      typeof CSS.supports === "function" &&
       CSS.supports("animation-timeline: view()")
-    if (usesMobileViewTimeline) return
+    if (usesNativeViewTimeline) return
 
     let ticking = false
     const updateHeroFade = () => {
@@ -294,7 +295,7 @@ export default function App() {
           <ServicesSection />
 
           {/* Interactive 5-Step Process Loop */}
-          <ProcessSection />
+          <ProcessSection lenis={lenisInstance} />
 
           {/* Collaborators & Testimonials */}
           <TestimonialsSection />

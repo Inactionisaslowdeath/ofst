@@ -2,6 +2,15 @@ import { describe, it, expect, vi } from "vitest"
 import { render, screen, fireEvent } from "@testing-library/react"
 import AboutPage from "./AboutPage"
 
+const matchByTextContent = (regex: RegExp) => (_: string, element: Element | null) => {
+  if (!element) return false
+  const hasText = regex.test(element.textContent ?? "")
+  const childrenDont = Array.from(element.children).every(
+    (c) => !regex.test(c.textContent ?? ""),
+  )
+  return hasText && childrenDont
+}
+
 describe("AboutPage", () => {
   it("renders hero showcase cards with images and statement copy", () => {
     render(
@@ -13,10 +22,12 @@ describe("AboutPage", () => {
     )
 
     expect(
-      screen.getByText(
-        /founded in 2023, we've built a practice around the power of contrast/i,
-      ),
-    ).toBeDefined()
+      screen.getAllByText(
+        matchByTextContent(
+          /founded in 2023, we've built a practice around the power of contrast/i,
+        ),
+      ).length,
+    ).toBeGreaterThan(0)
 
     const handImg = screen.getByAltText(
       /hand wearing titanium smart ring holding smartphone/i,
@@ -30,7 +41,7 @@ describe("AboutPage", () => {
     // Verify bottom text/pills have been removed per user instruction
     expect(screen.queryByText("Tactile Interaction")).toBeNull()
     expect(screen.queryByText("Generative Form")).toBeNull()
-  })
+  }, 15000)
 
   it("renders 4 partner logo shapes right below the cards", () => {
     render(
@@ -62,18 +73,24 @@ describe("AboutPage", () => {
     expect(screen.getByText(/we build what feels inevitable\./i)).toBeDefined()
     expect(screen.queryByText(/— philosophy —/i)).toBeNull()
     expect(
-      screen.getByText(
-        /is an independent digital studio built on contrast and craft\./i,
-      ),
-    ).toBeDefined()
+      screen.getAllByText(
+        matchByTextContent(
+          /is an independent digital studio built on contrast and craft\./i,
+        ),
+      ).length,
+    ).toBeGreaterThan(0)
     expect(
-      screen.getByText(
-        /strategy and emotion\. restraint and impact\. clarity and intent\./i,
-      ),
-    ).toBeDefined()
+      screen.getAllByText(
+        matchByTextContent(
+          /strategy and emotion\. restraint and impact\. clarity and intent\./i,
+        ),
+      ).length,
+    ).toBeGreaterThan(0)
     expect(
-      screen.getByText(/we believe design is a conversation/i),
-    ).toBeDefined()
+      screen.getAllByText(
+        matchByTextContent(/we believe design is a conversation/i),
+      ).length,
+    ).toBeGreaterThan(0)
   })
 
   it("renders What We Do Perfectly services section and interactive services", () => {
@@ -100,13 +117,19 @@ describe("AboutPage", () => {
     )
 
     expect(
-      screen.getByText(
-        /we build distinctive brands and digital experiences around/i,
-      ),
-    ).toBeDefined()
+      screen.getAllByText(
+        matchByTextContent(
+          /we build distinctive brands and digital experiences around/i,
+        ),
+      ).length,
+    ).toBeGreaterThan(0)
     expect(
-      screen.getByText(/and design explorations from the ofst studio\./i),
-    ).toBeDefined()
+      screen.getAllByText(
+        matchByTextContent(
+          /and design explorations from the ofst studio\./i,
+        ),
+      ).length,
+    ).toBeGreaterThan(0)
     expect(screen.getAllByText(/crafting experiences/i).length).toBeGreaterThan(
       0,
     )

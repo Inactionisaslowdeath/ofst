@@ -361,19 +361,17 @@ html.dark .text-gradient-white-to-black {
   );
 }
 
-@media (max-width: 767px) {
-  .hero-scroll-source {
-    view-timeline-name: --hero-scroll;
-    view-timeline-axis: block;
-  }
+.hero-scroll-source {
+  view-timeline-name: --hero-scroll;
+  view-timeline-axis: block;
+}
 
-  @supports (animation-timeline: view()) {
-    .hero-bottom-fade {
-      animation: hero-bottom-fade-out linear both;
-      animation-timeline: --hero-scroll;
-      animation-range: exit 0% exit 24%;
-      transition: none;
-    }
+@supports (animation-timeline: view()) {
+  .hero-bottom-fade {
+    animation: hero-bottom-fade-out linear both;
+    animation-timeline: --hero-scroll;
+    animation-range: exit 0% exit 24%;
+    transition: none;
   }
 }
 
@@ -448,3 +446,25 @@ html.dark .text-gradient-white-to-black {
     transform: translateX(-50%);
   }
 }
+
+/*
+  Kinetic Text Illumination Scrub Words:
+  Default initial state is dimmed (opacity 0.15, slight blur, slight offset)
+  so text is NEVER displayed at 100% opacity before GSAP ScrollTrigger initializes.
+*/
+.scrub-word {
+  opacity: 0.15;
+  filter: blur(3.5px);
+  transform: translateY(5px);
+  will-change: opacity, transform, filter;
+  display: inline-block;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scrub-word {
+    opacity: 1 !important;
+    filter: none !important;
+    transform: none !important;
+  }
+}
+

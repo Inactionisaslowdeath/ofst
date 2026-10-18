@@ -67,14 +67,17 @@ Workspace skills are configured in `.agents/skills/`. Full directory and departm
 - Use `ponytail`, `ponytail-debt`, and `ponytail-gain` when analyzing technical debt and refactoring ROI.
 - Use `typescript-best-practices` and `check-compiler-errors` for strict type correctness and compiler diagnostics.
 - Use `deslop` and `unslop` to ensure clean, lean, high-density code and prose.
+- Use the GSAP skill suite (`gsap-core`, `gsap-react`, `gsap-scrolltrigger`, `gsap-timeline`, `gsap-performance`, `gsap-plugins`, `gsap-utils`) when authoring or refactoring timelines, scroll triggers, parallax effects, or complex motion in React.
 
 ### Design, UI/UX & Motion Directives (MANDATORY)
 
 Whenever building, modifying, refactoring, or reviewing ANY user interface, CSS, styling, gestures, or animations:
-- **Mandatory Skills**: You MUST consult and follow `emil-design-eng`, `apple-design`, `animation-performance`, `animate`, `improve-animations`, `mobile-native`, and `performance-optimization`.
+- **Mandatory Skills**: You MUST consult and follow `emil-design-eng`, `apple-design`, `animation-performance`, `animate`, `improve-animations`, `mobile-native`, `performance-optimization`, and the GSAP suite (`gsap-core`, `gsap-react`, `gsap-scrolltrigger`, `gsap-timeline`, `gsap-performance`, `gsap-plugins`, `gsap-utils`).
 - **Zero-Jank Motion**: Strictly adhere to 60fps/120fps frame budgets. Animate ONLY composite properties (`transform`, `opacity`). Never animate `width`, `height`, `margin`, `padding`, or `top/left/right/bottom`.
 - **Never use `transition: all`**: Explicitly specify transitions (`transform 150ms ease-out, opacity 150ms ease-out`).
 - **Tactile Feedback**: Press states respond immediately on pointer-down (`scale(0.97)`). Never wait for click release.
 - **Mobile First-Class**: Use `dvh` units, eliminate sticky touch hovers with `@media (hover: hover)`, and prevent mobile tap delay.
+- **GSAP & React Lifecycle**: In React components, ALWAYS manage GSAP animations using `useGSAP` or `gsap.context()` for deterministic cleanup on unmount, avoiding memory leaks and zombie tweens.
+- **ScrollTrigger Integrity**: Ensure ScrollTrigger instances have explicit triggers, appropriate scroller proxies when paired with Lenis, and refresh hooks after DOM layout changes.
 
 

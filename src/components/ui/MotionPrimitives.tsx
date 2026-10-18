@@ -37,10 +37,15 @@ export function RevealLine({
   )
 }
 
+import { gsap } from "gsap"
+import { ScrollTrigger } from "gsap/ScrollTrigger"
+
+gsap.registerPlugin(ScrollTrigger)
+
 export interface AdaptiveLineItem {
   prefix?: React.ReactNode
   text: string
-  desktopClassName: string
+  desktopClassName?: string
 }
 
 export interface AdaptiveRevealParagraphProps {
@@ -52,14 +57,12 @@ export interface AdaptiveRevealParagraphProps {
 export function AdaptiveRevealParagraph({
   lines,
   containerClassName = "",
-  baseDelay = 0.05,
 }: AdaptiveRevealParagraphProps) {
-  const containerRef = useRef<HTMLParagraphElement>(null)
-  const wordRefs = useRef<(HTMLSpanElement | null)[]>([])
-  const [lineIndices, setLineIndices] = useState<number[]>([])
-  const [isMeasured, setIsMeasured] = useState(false)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const desktopRef = useRef<HTMLDivElement>(null)
+  const mobileRef = useRef<HTMLParagraphElement>(null)
 
-  // Flatten all words with metadata
+  // Flatten words for mobile fluid paragraph
   const flattenedWords = lines.flatMap((line, lineIdx) => {
     const rawWords = line.text.trim().split(/\s+/)
     return rawWords.map((word, wordIdx) => ({
@@ -70,110 +73,162 @@ export function AdaptiveRevealParagraph({
     }))
   })
 
-  // Measure line breaks on mobile viewports
-  useLayoutEffect(() => {
-    const measureLines = () => {
-      // On desktop (md: >= 768px), we use the static desktop markup
-      if (window.innerWidth >= 768) {
-        setIsMeasured(false)
-        return
+  useEffect(() => {
+    const reducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches
+    if (reducedMotion || !containerRef.current) return
+
+    const mm = gsap.matchMedia(containerRef)
+
+    // Desktop: >= 768px
+    mm.add("(min-width: 768px)", () => {
+      const words = desktopRef.current?.querySelectorAll(".scrub-word")
+      if (words && words.length > 0) {
+        gsap.fromTo(
+          words,
+          {
+            opacity: 0.15,
+            y: 5,
+            filter: "blur(3.5px)",
+          },
+          {
+            opacity: 1,
+            y: 0,
+            filter: "blur(0px)",
+            stagger: 0.05,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: containerRef.current,
+              start: "top 80%",
+              end: "bottom 38%",
+              scrub: 0.8,
+              invalidateOnRefresh: true,
+            },
+          },
+        )
       }
+    })
 
-      const elements = wordRefs.current.filter(Boolean) as HTMLSpanElement[]
-      if (elements.length === 0) return
+    // Mobile: < 768px
+    mm.add("(max-width: 767px)", () => {
+      const words = mobileRef.current?.querySelectorAll(".scrub-word")
+      if (words && words.length > 0) {
+        gsap.fromTo(
+          words,
+          {
+            opacity: 0.15,
+            y: 5,
+            filter: "blur(3.5px)",
+          },
+          {
+            opacity: 1,
+            y: 0,
+            filter: "blur(0px)",
+            stagger: 0.05,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: containerRef.current,
+              start: "top 85%",
+              end: "bottom 40%",
+              scrub: 0.8,
+              invalidateOnRefresh: true,
+            },
+          },
+        )
+      }
+    })
 
-      let currentTop = -1
-      let currentLine = 0
-      const assignedLines: number[] = []
-
-      elements.forEach((el) => {
-        const top = Math.round(el.offsetTop)
-        if (currentTop === -1) {
-          currentTop = top
-        } else if (Math.abs(top - currentTop) > 6) {
-          // New visual line encountered
-          currentTop = top
-          currentLine += 1
-        }
-        assignedLines.push(currentLine)
-      })
-
-      setLineIndices(assignedLines)
-      setIsMeasured(true)
-    }
-
-    measureLines()
-
-    const container = containerRef.current
-    let observer: ResizeObserver | null = null
-    if (container && typeof ResizeObserver !== "undefined") {
-      observer = new ResizeObserver(() => measureLines())
-      observer.observe(container)
-    }
-
-    window.addEventListener("resize", measureLines)
-    return () => {
-      window.removeEventListener("resize", measureLines)
-      if (observer) observer.disconnect()
-    }
+    return () => mm.revert()
   }, [lines])
 
   return (
-    <>
-      {/* Desktop view: exact static desktop lines with precise delay and classes */}
-      <p className={`hidden md:block ${containerClassName}`}>
-        {lines.map((item, index) => (
-          <RevealLine
-            key={index}
-            delay={baseDelay + index * 0.1}
-            className={item.desktopClassName}
-          >
-            {item.prefix}
-            {item.prefix ? " " : ""}
-            {item.text}
-          </RevealLine>
-        ))}
-      </p>
-
-      {/* Mobile view: continuous wrapping with per-line staggered blur + translate reveal */}
-      <p ref={containerRef} className={`block md:hidden ${containerClassName}`}>
-        {flattenedWords.map((item, idx) => {
-          const lineNum = lineIndices[idx] ?? 0
-          const wordDelay = baseDelay + lineNum * 0.12
-
+    <div ref={containerRef} className="select-none">
+      {/* Desktop view: exact static desktop lines with desktopClassName */}
+      <div ref={desktopRef} className={`hidden md:block ${containerClassName}`}>
+        {lines.map((item, index) => {
+          const words = item.text.trim().split(/\s+/)
           return (
-            <motion.span
-              key={idx}
-              ref={(el) => {
-                wordRefs.current[idx] = el
-              }}
-              initial={{
-                opacity: 0,
-                transform: "translateY(28px)",
-                filter: "blur(10px)",
-              }}
-              whileInView={{
-                opacity: 1,
-                transform: "translateY(0px)",
-                filter: "blur(0px)",
-              }}
-              viewport={{ once: true, margin: "0px 0px -60px 0px" }}
-              transition={{
-                duration: 0.8,
-                delay: isMeasured ? wordDelay : baseDelay,
-                ease: [0.16, 1, 0.3, 1],
-              }}
-              className="inline-block will-change-[transform,opacity]"
-            >
-              {item.prefix && <>{item.prefix} </>}
-              {item.word}
-              {/* Natural spacing between inline-block words */}
-              <span>&nbsp;</span>
-            </motion.span>
+            <p key={index} className={item.desktopClassName}>
+              {item.prefix && (
+                <span className="scrub-word mr-[0.28em] inline-block">
+                  {item.prefix}{" "}
+                </span>
+              )}
+              {words.map((word, wIdx) => (
+                <span key={wIdx} className="scrub-word mr-[0.28em] inline-block">
+                  {word}{" "}
+                </span>
+              ))}
+            </p>
           )
         })}
+      </div>
+
+      {/* Mobile view: continuous fluid paragraph containing all flattened words */}
+      <p ref={mobileRef} className={`block md:hidden ${containerClassName}`}>
+        {flattenedWords.map((item, idx) => (
+          <span key={idx} className="scrub-word mr-[0.28em] inline-block">
+            {item.prefix && <>{item.prefix} </>}
+            {item.word}{" "}
+          </span>
+        ))}
       </p>
-    </>
+    </div>
+  )
+}
+
+export function KineticBarcode({ className = "" }: { className?: string }) {
+  const barcodeRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const reducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches
+    if (reducedMotion || !barcodeRef.current) return
+
+    const ctx = gsap.context(() => {
+      const bars = barcodeRef.current?.querySelectorAll(".barcode-bar")
+      if (bars && bars.length > 0) {
+        gsap.fromTo(
+          bars,
+          { scaleY: 0.15, opacity: 0.25 },
+          {
+            scaleY: 1,
+            opacity: 1,
+            stagger: 0.03,
+            ease: "power1.out",
+            scrollTrigger: {
+              trigger: barcodeRef.current,
+              start: "top 85%",
+              end: "center 60%",
+              scrub: 0.8,
+              invalidateOnRefresh: true,
+            },
+          },
+        )
+      }
+    }, barcodeRef)
+
+    return () => ctx.revert()
+  }, [])
+
+  return (
+    <div
+      ref={barcodeRef}
+      aria-hidden="true"
+      className={`flex h-[30px] items-stretch gap-[3px] ${className}`}
+    >
+      <span className="barcode-bar w-8 origin-bottom rounded-[1px] bg-[#030303] dark:bg-white" />
+      <span className="barcode-bar w-6 origin-bottom rounded-[1px] bg-[#030303] dark:bg-white" />
+      <span className="barcode-bar w-[14px] origin-bottom rounded-[1px] bg-[#030303] dark:bg-white" />
+      {Array.from({ length: 17 }, (_, index) => (
+        <span
+          key={index}
+          className="barcode-bar w-[2px] origin-bottom rounded-[1px] bg-[#030303] dark:bg-white"
+        />
+      ))}
+    </div>
   )
 }
 

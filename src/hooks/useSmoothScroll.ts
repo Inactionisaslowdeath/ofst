@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import Lenis from "lenis"
 import { frame, cancelFrame } from "framer-motion"
+import { ScrollTrigger } from "gsap/ScrollTrigger"
 
 export function useSmoothScroll() {
   const [lenis, setLenis] = useState<Lenis | null>(null)
@@ -29,10 +30,17 @@ export function useSmoothScroll() {
       }
       frame.update(updateLenis, true)
 
+      // Keep GSAP ScrollTrigger precisely synchronized with Lenis
+      const onLenisScroll = () => {
+        ScrollTrigger.update()
+      }
+      instance.on("scroll", onLenisScroll)
+
       setLenis(instance)
       if (document.body.style.overflow === "hidden") instance.stop()
 
       return () => {
+        instance.off("scroll", onLenisScroll)
         cancelFrame(updateLenis)
         instance.destroy()
         setLenis(null)

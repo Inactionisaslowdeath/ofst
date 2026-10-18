@@ -2,7 +2,7 @@
 
 All skills installed inside [`c:\Users\user\Desktop\OFST\.agents\skills`](file:///c:/Users/user/Desktop/OFST/.agents/skills) organized into functional software engineering departments.
 
-Total Skills: **114**
+Total Skills: **122**
 
 ---
 
@@ -43,6 +43,14 @@ Total Skills: **114**
 - **[`control-ui`](file:///c:/Users/user/Desktop/OFST/.agents/skills/control-ui/SKILL.md)**: Browser UI automation, visual verification, and interactive UI inspection.
 - **[`make-bot-ui`](file:///c:/Users/user/Desktop/OFST/.agents/skills/make-bot-ui/SKILL.md)**: Craft conversational UI and responsive chat-based components.
 - **[`prototype`](file:///c:/Users/user/Desktop/OFST/.agents/skills/prototype/SKILL.md)**: Rapidly explore design questions, UI mockups, and quick throwaway validation prototypes.
+- **[`gsap-core`](file:///c:/Users/user/Desktop/OFST/.agents/skills/gsap-core/SKILL.md)**: Core GSAP animation engine, tweens (`gsap.to`, `from`, `fromTo`), easing curves, staggers, and responsive/reduced-motion handling via `gsap.matchMedia()`.
+- **[`gsap-react`](file:///c:/Users/user/Desktop/OFST/.agents/skills/gsap-react/SKILL.md)**: Official React integration, `useGSAP` hook lifecycle, ref scoping, SSR safety, and automated context cleanup.
+- **[`gsap-scrolltrigger`](file:///c:/Users/user/Desktop/OFST/.agents/skills/gsap-scrolltrigger/SKILL.md)**: Scroll-driven animations, parallax effects, scrub synchronization, section pinning, and Lenis smooth-scroll integration.
+- **[`gsap-timeline`](file:///c:/Users/user/Desktop/OFST/.agents/skills/gsap-timeline/SKILL.md)**: Choreographed multi-step animation sequences, timeline nesting, position parameter offsets, and playback control.
+- **[`gsap-performance`](file:///c:/Users/user/Desktop/OFST/.agents/skills/gsap-performance/SKILL.md)**: Hardware-accelerated transforms, 60fps/120fps frame budgets, `will-change` batching, and layout thrashing prevention.
+- **[`gsap-plugins`](file:///c:/Users/user/Desktop/OFST/.agents/skills/gsap-plugins/SKILL.md)**: Full GSAP plugin suite (ScrollToPlugin, ScrollSmoother, Flip layout morphing, Draggable, SplitText, ScrambleText, CustomEase).
+- **[`gsap-utils`](file:///c:/Users/user/Desktop/OFST/.agents/skills/gsap-utils/SKILL.md)**: Utility functions for animations: `clamp`, `mapRange`, `normalize`, `interpolate`, `random`, `snap`, `toArray`, `wrap`, and `pipe`.
+- **[`gsap-frameworks`](file:///c:/Users/user/Desktop/OFST/.agents/skills/gsap-frameworks/SKILL.md)**: Non-React component framework integrations (Vue, Nuxt, Svelte, SvelteKit) lifecycle and tween management.
 
 ---
 

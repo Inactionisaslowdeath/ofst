@@ -37,8 +37,8 @@ A view-transition powered theme switcher that clips light and dark mode changes 
 ### Project Showcase Modal
 An accessible, dialog-based portfolio detail view that captures focus, binds `Escape` and `Tab` keys, and temporarily halts root scroll velocity.
 
-### Process Step Carousel
-The auto-progressing 5-step studio methodology loop (`Listen`, `Explore`, `Refine`, `Build`, `Reflect`) with animated character staggered typography reveals and linear progress indicator bars.
+### Pinned Process Timeline
+The pinned interactive 5-step studio methodology sequence (`Listen`, `Explore`, `Refine`, `Build`, `Reflect`) driven by synchronous ScrollTrigger scrubbing with upward character dispersal and linear progress tracking.
 
 ### Portrait Stagger Array
 The 9-column offset creative collaborator grid with millisecond-staggered vertical emergence.

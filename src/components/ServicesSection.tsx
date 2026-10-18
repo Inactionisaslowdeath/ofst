@@ -3,7 +3,7 @@ import { CornerLabel, RevealLine } from "./ui/MotionPrimitives"
 
 export function ServicesSection() {
   return (
-    <section id="services" className="scroll-mt-20 mb-10 md:mb-14">
+    <section id="services" className="scroll-mt-20 pb-10 md:pb-14">
       <div className="flex flex-col justify-between rounded-[5px] bg-[#030303] p-5 text-white dark:bg-white dark:text-[#030303]">
         <div className="flex min-h-[min(65vw,991px)] flex-col justify-between max-md:min-h-[470px]">
           <CornerLabel>

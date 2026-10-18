@@ -8,6 +8,7 @@ import FooterSection from "./FooterSection"
 import {
   AdaptiveRevealParagraph,
   Counter,
+  KineticBarcode,
   RevealBlock,
   RevealLine,
 } from "./ui/MotionPrimitives"
@@ -180,26 +181,16 @@ export function AboutPage({
 
               {/* Right Column: Text container (W:765, H:55.22) + Card (W:765, H:765) */}
               <div className="flex flex-col w-full max-w-[765px]">
-                {/* Text Container: exact W:765, H:55.22, font size 16, line height 18.4, letter spacing -0.48px, animated per line */}
-                <div className="w-full max-w-[765px] min-h-[55.22px] mb-[36.76px] max-md:mb-4">
-                  <AdaptiveRevealParagraph
-                    containerClassName="text-[16px] leading-[18.4px] tracking-[-0.48px] text-[#030303] dark:text-white"
-                    baseDelay={0.05}
-                    lines={[
-                      {
-                        text: "Founded in 2023, we've built a practice around the power of contrast—visual,",
-                        desktopClassName: "block md:whitespace-nowrap",
-                      },
-                      {
-                        text: "conceptual, and emotional. We believe the most compelling digital experiences",
-                        desktopClassName: "block md:whitespace-nowrap",
-                      },
-                      {
-                        text: "don't try to please everyone. They make deliberate choices that resonate deeply with the right audience.",
-                        desktopClassName: "block",
-                      },
-                    ]}
-                  />
+                {/* Text Container: exact W:765, H:55.22, font size 16, line height 18.4, letter spacing -0.48px */}
+                <div className="w-full max-w-[765px] min-h-[55.22px] mb-[36.76px] max-md:mb-4 text-[16px] leading-[18.4px] tracking-[-0.48px] text-[#030303] dark:text-white select-none">
+                  <div className="hidden md:block">
+                    <p className="whitespace-nowrap">Founded in 2023, we've built a practice around the power of contrast—visual,</p>
+                    <p className="whitespace-nowrap">conceptual, and emotional. We believe the most compelling digital experiences</p>
+                    <p>don't try to please everyone. They make deliberate choices that resonate deeply with the right audience.</p>
+                  </div>
+                  <p className="block md:hidden">
+                    Founded in 2023, we've built a practice around the power of contrast—visual, conceptual, and emotional. We believe the most compelling digital experiences don't try to please everyone. They make deliberate choices that resonate deeply with the right audience.
+                  </p>
                 </div>
 
                 {/* Right Card: exact W:765, H:765, rounded 10 */}
@@ -232,21 +223,8 @@ export function AboutPage({
             </div>
 
             <div className="grid items-center gap-10 md:grid-cols-[1fr_2fr] md:content-center md:items-baseline">
-              {/* Left Column: Barcode Stripe Element */}
-              <RevealBlock
-                delay={0.1}
-                className="flex h-[30px] items-stretch gap-[3px]"
-              >
-                <span className="w-8 rounded-[1px] bg-[#030303] dark:bg-white" />
-                <span className="w-6 rounded-[1px] bg-[#030303] dark:bg-white" />
-                <span className="w-[14px] rounded-[1px] bg-[#030303] dark:bg-white" />
-                {Array.from({ length: 17 }, (_, index) => (
-                  <span
-                    key={index}
-                    className="w-[2px] rounded-[1px] bg-[#030303] dark:bg-white"
-                  />
-                ))}
-              </RevealBlock>
+              {/* Left Column: Kinetic Barcode Stripe Element */}
+              <KineticBarcode />
 
               <div className="w-full space-y-8 md:space-y-10 md:-translate-x-[80px]">
                 <AdaptiveRevealParagraph
@@ -304,7 +282,7 @@ export function AboutPage({
             aria-label="Studio impact and metrics"
             className="py-14 sm:py-20 border-t border-[#e5e5e5] dark:border-white/10 mt-14"
           >
-            <div className="ml-auto mt-6 sm:mt-10 md:mt-14 w-full max-w-[1040px] space-y-6 md:space-y-0">
+            <div className="ml-auto mt-6 sm:mt-10 md:mt-14 w-full max-w-[1040px]">
               <AdaptiveRevealParagraph
                 containerClassName="w-full max-w-[1040px] text-[30px] leading-[1.16] tracking-tight-statement [container-type:inline-size] md:text-[40px] md:tracking-tight-display"
                 baseDelay={0.05}
@@ -315,20 +293,9 @@ export function AboutPage({
                       "block md:text-right md:text-[min(40px,3.75cqw)] md:whitespace-nowrap",
                   },
                   {
-                    text: "a clear idea and a real purpose.",
+                    text: "a clear idea and a real purpose. Explore a selection of concepts",
                     desktopClassName:
-                      "inline md:text-left md:text-[min(40px,3.75cqw)]",
-                  },
-                ]}
-              />
-              <AdaptiveRevealParagraph
-                containerClassName="w-full max-w-[1040px] text-[30px] leading-[1.16] tracking-tight-statement [container-type:inline-size] md:text-[40px] md:tracking-tight-display"
-                baseDelay={0.2}
-                lines={[
-                  {
-                    text: "Explore a selection of concepts",
-                    desktopClassName:
-                      "inline md:text-left md:text-[min(40px,3.75cqw)] md:whitespace-nowrap",
+                      "block md:text-left md:text-[min(40px,3.75cqw)] md:whitespace-nowrap",
                   },
                   {
                     text: "and design explorations from the OFST studio.",

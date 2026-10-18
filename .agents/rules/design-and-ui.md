@@ -10,6 +10,11 @@ Whenever modifying or designing UI components, CSS, layouts, or transitions, you
 - `animate`: Motion intentionality gating (frequency gate: items triggered 100+ times/day get no animation; rare items get high craft). Correct cubic-bezier and spring physics curves. Always respect `prefers-reduced-motion`.
 - `mobile-native`: Eliminate iOS 100vh bugs, disable sticky touch hover states, kill the 300ms tap delay, and prevent input auto-zooming.
 - `performance-optimization`: Layout shifts (CLS = 0), asset delivery, and memory lifecycle cleanup.
+- `gsap-core` & `gsap-react`: Standard GSAP animations, `useGSAP` hook lifecycle, ref scoping, and automated context cleanup on unmount.
+- `gsap-scrolltrigger`: Scroll-driven animations, parallax effects, scrub synchronization, section pinning, and Lenis integration.
+- `gsap-timeline`: Choreographed multi-step sequences, position parameter micro-timings, and labels.
+- `gsap-performance`: Hardware-accelerated transforms, avoiding layout thrashing, and batching `will-change`.
+- `gsap-plugins` & `gsap-utils`: FLIP layout morphing, Draggable, SplitText, and numerical interpolation helpers (`clamp`, `mapRange`, `pipe`).
 
 ## 2. Hard Non-Negotiable Rules
 
@@ -19,6 +24,7 @@ Whenever modifying or designing UI components, CSS, layouts, or transitions, you
 3. **No `ease-in` on UI entrances**. Entrances MUST use `ease-out` or a critically damped spring.
 4. **Keyboard shortcuts / high-frequency actions never animate**. Modals and command bars triggered by keyboard open and close instantly.
 5. **No `scale(0)`**. Entering popovers and modals scale down to at most `scale(0.95)` to maintain visual weight and avoid feeling like a cartoon pop.
+6. **GSAP React Cleanup**: Never leave unmanaged GSAP tweens or ScrollTrigger instances. Always wrap them inside `useGSAP` or `gsap.context()` with proper unmount cleanup.
 
 ### B. Tactile Feedback & Micro-interactions
 1. **Press states live on pointer-down**: Interactive elements MUST respond immediately on press (`:active { transform: scale(0.97); }` or subtle brightness shifts). Never wait for release/click.
