@@ -1,9 +1,13 @@
 import { useEffect, useRef, useState } from "react"
+import { gsap } from "gsap"
+import { ScrollTrigger } from "gsap/ScrollTrigger"
 import type Lenis from "lenis"
 import { RevealLine } from "./ui/MotionPrimitives"
 
+gsap.registerPlugin(ScrollTrigger)
+
 export interface ContactSectionProps {
-  lenis: Lenis | null
+  lenis?: Lenis | null
   initialConverged?: boolean
 }
 
@@ -15,59 +19,72 @@ export function ContactSection({
   const sectionRef = useRef<HTMLElement | null>(null)
   const leftHandRef = useRef<HTMLImageElement | null>(null)
   const rightHandRef = useRef<HTMLImageElement | null>(null)
+  const cardRef = useRef<HTMLDivElement | null>(null)
+  const headingRef = useRef<HTMLHeadingElement | null>(null)
 
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return
+    const isJSDOM =
+      typeof navigator !== "undefined" &&
+      /jsdom/i.test(navigator.userAgent || "")
+    const reducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches
 
     const section = sectionRef.current
     const leftHand = leftHandRef.current
     const rightHand = rightHandRef.current
-    if (!section || !leftHand || !rightHand) return
+    const card = cardRef.current
+    const heading = headingRef.current
+    if (!section || !leftHand || !rightHand || !card) return
 
-    const updateHands = () => {
-      if (!section || !leftHand || !rightHand) return
-      if (initialConverged) {
-        leftHand.style.transform = "translate3d(0, 0, 0)"
-        rightHand.style.transform = "translate3d(0, 0, 0)"
-        return
-      }
-      const rect = section.getBoundingClientRect()
-      const windowHeight = window.innerHeight
-
-      const start = windowHeight
-      const end = (windowHeight - rect.height) / 2
-      const range = start - end
-
-      if (range <= 0) return
-
-      const progress = Math.max(0, Math.min(1, (start - rect.top) / range))
-      const START_OFFSET_X = 130
-
-      const leftX = -START_OFFSET_X * (1 - progress)
-      const rightX = START_OFFSET_X * (1 - progress)
-
-      leftHand.style.transform = `translate3d(${leftX}%, 0, 0)`
-      rightHand.style.transform = `translate3d(${rightX}%, 0, 0)`
+    // On dedicated contact page, reduced motion, or test environments: static convergence
+    if (initialConverged || reducedMotion || isJSDOM) {
+      gsap.set(leftHand, { xPercent: 0 })
+      gsap.set(rightHand, { xPercent: 0 })
+      return
     }
 
-    updateHands()
+    const mm = gsap.matchMedia(sectionRef)
 
-    if (lenis) {
-      const handleLenisScroll = () => updateHands()
-      lenis.on("scroll", handleLenisScroll)
-      return () => {
-        lenis.off("scroll", handleLenisScroll)
-      }
-    } else {
-      const handleScroll = () => updateHands()
-      window.addEventListener("scroll", handleScroll, { passive: true })
-      window.addEventListener("resize", handleScroll)
-      return () => {
-        window.removeEventListener("scroll", handleScroll)
-        window.removeEventListener("resize", handleScroll)
-      }
-    }
-  }, [lenis, initialConverged])
+    // Desktop only (>= 768px): Kinematically Pinned Reaching Hands
+    // Section pins briefly when centered in the viewport.
+    // Hands smoothly scrub inward from opposite sides.
+    // On mobile (< 768px), hands are hidden and no pinning occurs.
+    mm.add("(min-width: 768px)", () => {
+      gsap.set(leftHand, { xPercent: -100 })
+      gsap.set(rightHand, { xPercent: 100 })
+
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: section,
+          pin: true,
+          pinSpacing: true,
+          anticipatePin: 0,
+          start: "center center",
+          end: "+=500",
+          scrub: 0.6,
+          fastScrollEnd: true,
+          invalidateOnRefresh: true,
+        },
+      })
+
+      // Bilateral hands scrub smoothly inward toward center
+      tl.fromTo(
+        leftHand,
+        { xPercent: -100 },
+        { xPercent: 0, ease: "power1.out", duration: 1 },
+        0,
+      )
+      tl.fromTo(
+        rightHand,
+        { xPercent: 100 },
+        { xPercent: 0, ease: "power1.out", duration: 1 },
+        0,
+      )
+    })
+
+    return () => mm.revert()
+  }, [initialConverged])
 
   return (
     <section
@@ -79,26 +96,22 @@ export function ContactSection({
         ref={leftHandRef}
         src="/assets/788a4.png"
         alt="A hand reaching toward the center"
-        className="pointer-events-none absolute left-0 top-3 w-[31%] max-md:hidden will-change-transform [backface-visibility:hidden]"
-        style={{
-          transform: initialConverged
-            ? "translate3d(0, 0, 0)"
-            : "translate3d(-130%, 0, 0)",
-        }}
+        className="pointer-events-none absolute left-0 top-3 w-[31%] hidden md:block will-change-transform [backface-visibility:hidden]"
       />
       <img
         ref={rightHandRef}
         src="/assets/3400b.png"
         alt="A hand reaching from the other side"
-        className="pointer-events-none absolute right-0 top-3 w-[31%] max-md:hidden will-change-transform [backface-visibility:hidden]"
-        style={{
-          transform: initialConverged
-            ? "translate3d(0, 0, 0)"
-            : "translate3d(130%, 0, 0)",
-        }}
+        className="pointer-events-none absolute right-0 top-3 w-[31%] hidden md:block will-change-transform [backface-visibility:hidden]"
       />
-      <div className="relative mx-auto max-w-[500px] text-center">
-        <h2 className="text-[32px] leading-[41.6px] tracking-tight-statement">
+      <div
+        ref={cardRef}
+        className="relative z-10 mx-auto max-w-[500px] text-center will-change-transform"
+      >
+        <h2
+          ref={headingRef}
+          className="text-[32px] leading-[41.6px] tracking-tight-statement"
+        >
           <RevealLine className="inline-block text-gradient-black-to-white">
             Let's build with intent.
           </RevealLine>
@@ -132,7 +145,7 @@ export function ContactSection({
               required
               name="name"
               placeholder="Your name"
-              className="mt-2 h-10 w-full rounded-[10px] bg-[#f2f2f2] px-3 text-[14px] text-[#030303] placeholder:text-[#888888] outline-offset-4"
+              className="mt-2 h-10 w-full rounded-[10px] bg-[#f2f2f2] px-3 text-[16px] md:text-[14px] text-[#030303] placeholder:text-[#888888] outline-offset-4"
             />
           </label>
           <label className="block text-[12px]">
@@ -142,7 +155,7 @@ export function ContactSection({
               name="email"
               type="email"
               placeholder="you@company.com"
-              className="mt-2 h-10 w-full rounded-[10px] bg-[#f2f2f2] px-3 text-[14px] text-[#030303] placeholder:text-[#888888] outline-offset-4"
+              className="mt-2 h-10 w-full rounded-[10px] bg-[#f2f2f2] px-3 text-[16px] md:text-[14px] text-[#030303] placeholder:text-[#888888] outline-offset-4"
             />
           </label>
           <label className="block text-[12px]">
@@ -152,7 +165,7 @@ export function ContactSection({
               name="message"
               placeholder="Tell us what you are building, what is not working yet, and what you would like to achieve."
               rows={5}
-              className="mt-2 w-full resize-y rounded-[10px] bg-[#f2f2f2] p-3 text-[14px] text-[#030303] placeholder:text-[#888888] outline-offset-4"
+              className="mt-2 w-full resize-y rounded-[10px] bg-[#f2f2f2] p-3 text-[16px] md:text-[14px] text-[#030303] placeholder:text-[#888888] outline-offset-4"
             />
           </label>
           <button

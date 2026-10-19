@@ -1,5 +1,7 @@
 import { useEffect, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
+import { gsap } from "gsap"
+import { ScrollTrigger } from "gsap/ScrollTrigger"
 import type { ProjectItem } from "../data/content"
 
 import {
@@ -7,6 +9,8 @@ import {
   RevealLine,
   AdaptiveRevealParagraph,
 } from "./ui/MotionPrimitives"
+
+gsap.registerPlugin(ScrollTrigger)
 
 export interface ProjectShowcaseProps {
   projects: ProjectItem[]
@@ -19,6 +23,7 @@ export function ProjectShowcase({
   activeProject,
   setActiveProject,
 }: ProjectShowcaseProps) {
+  const sectionRef = useRef<HTMLElement>(null)
   const modalRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -34,10 +39,47 @@ export function ProjectShowcase({
     return () => document.removeEventListener("keydown", handleKey)
   }, [activeProject, setActiveProject])
 
+  useEffect(() => {
+    const isJSDOM =
+      typeof navigator !== "undefined" &&
+      /jsdom/i.test(navigator.userAgent || "")
+    const reducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches
+    if (isJSDOM || reducedMotion || !sectionRef.current) return
+
+    const ctx = gsap.context(() => {
+      const cards =
+        sectionRef.current?.querySelectorAll<HTMLElement>(".project-card")
+      cards?.forEach((card) => {
+        const innerImg = card.querySelector<HTMLElement>(".project-image-inner")
+        if (!innerImg) return
+
+        gsap.fromTo(
+          innerImg,
+          { yPercent: -18 },
+          {
+            yPercent: 18,
+            ease: "none",
+            scrollTrigger: {
+              trigger: card,
+              start: "top bottom",
+              end: "bottom top",
+              scrub: true,
+              invalidateOnRefresh: true,
+            },
+          },
+        )
+      })
+    }, sectionRef)
+
+    return () => ctx.revert()
+  }, [projects])
+
   const selectedItem = activeProject !== null ? projects[activeProject] : null
 
   return (
-    <section id="projects" className="scroll-mt-20 pt-10">
+    <section id="projects" ref={sectionRef} className="scroll-mt-20 pt-10">
       <h2 className="mb-5 text-[40px] leading-[46.4px] tracking-tight-display">
         <div className="block">
           <RevealLine className="inline-block text-gradient-black-to-white">
@@ -58,13 +100,17 @@ export function ProjectShowcase({
         <button
           type="button"
           onClick={() => setActiveProject(0)}
-          className="group text-left cursor-pointer transition-[transform,opacity] duration-150 active:scale-[0.98]"
+          className="project-card group text-left cursor-pointer transition-[transform,opacity] duration-150 active:scale-[0.98]"
         >
-          <img
-            src={`/assets/${projects[0].image}`}
-            alt={projects[0].alt || projects[0].name}
-            className="aspect-[738/781] w-full rounded-[5px] object-cover transition-opacity duration-200 @media(hover:hover):group-hover:opacity-85"
-          />
+          <div className="relative aspect-[738/781] w-full overflow-hidden rounded-[5px]">
+            <div className="project-image-inner absolute inset-0 size-full scale-[1.38] will-change-transform">
+              <img
+                src={`/assets/${projects[0].image}`}
+                alt={projects[0].alt || projects[0].name}
+                className="size-full object-cover transition-opacity duration-200 @media(hover:hover):group-hover:opacity-85"
+              />
+            </div>
+          </div>
           <span className="mt-2 block text-[12px] text-white dark:text-[#030303]">
             {projects[0].name}
           </span>
@@ -76,13 +122,17 @@ export function ProjectShowcase({
               type="button"
               onClick={() => setActiveProject(index + 1)}
               key={item.name}
-              className="group text-left cursor-pointer transition-[transform,opacity] duration-150 active:scale-[0.97]"
+              className="project-card group text-left cursor-pointer transition-[transform,opacity] duration-150 active:scale-[0.97]"
             >
-              <img
-                src={`/assets/${item.image}`}
-                alt={item.name}
-                className="aspect-[243/257] w-full rounded-[5px] object-cover transition-opacity duration-200 @media(hover:hover):group-hover:opacity-85"
-              />
+              <div className="relative aspect-[243/257] w-full overflow-hidden rounded-[5px]">
+                <div className="project-image-inner absolute inset-0 size-full scale-[1.38] will-change-transform">
+                  <img
+                    src={`/assets/${item.image}`}
+                    alt={item.name}
+                    className="size-full object-cover transition-opacity duration-200 @media(hover:hover):group-hover:opacity-85"
+                  />
+                </div>
+              </div>
               <span className="mt-2 block text-[12px] text-white dark:text-[#030303]">
                 {item.name}
               </span>

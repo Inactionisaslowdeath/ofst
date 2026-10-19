@@ -76,7 +76,7 @@ export function FooterSection({
                   name="subscriber"
                   aria-label="Newsletter email address"
                   placeholder="Enter your email"
-                  className="h-11 w-full rounded-[10px] bg-white pl-3 pr-28 text-[14px] text-black"
+                  className="h-11 w-full rounded-[10px] bg-white pl-3 pr-28 text-[16px] md:text-[14px] text-black"
                 />
                 <button
                   type="submit"
