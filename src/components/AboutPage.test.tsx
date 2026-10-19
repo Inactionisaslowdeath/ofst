@@ -2,14 +2,15 @@ import { describe, it, expect, vi } from "vitest"
 import { render, screen, fireEvent } from "@testing-library/react"
 import AboutPage from "./AboutPage"
 
-const matchByTextContent = (regex: RegExp) => (_: string, element: Element | null) => {
-  if (!element) return false
-  const hasText = regex.test(element.textContent ?? "")
-  const childrenDont = Array.from(element.children).every(
-    (c) => !regex.test(c.textContent ?? ""),
-  )
-  return hasText && childrenDont
-}
+const matchByTextContent =
+  (regex: RegExp) => (_: string, element: Element | null) => {
+    if (!element) return false
+    const hasText = regex.test(element.textContent ?? "")
+    const childrenDont = Array.from(element.children).every(
+      (c) => !regex.test(c.textContent ?? ""),
+    )
+    return hasText && childrenDont
+  }
 
 describe("AboutPage", () => {
   it("renders hero showcase cards with images and statement copy", () => {
@@ -125,9 +126,7 @@ describe("AboutPage", () => {
     ).toBeGreaterThan(0)
     expect(
       screen.getAllByText(
-        matchByTextContent(
-          /and design explorations from the ofst studio\./i,
-        ),
+        matchByTextContent(/and design explorations from the ofst studio\./i),
       ).length,
     ).toBeGreaterThan(0)
     expect(screen.getAllByText(/crafting experiences/i).length).toBeGreaterThan(

@@ -26,5 +26,9 @@ logs/
 /.agents/skills/
 /skills/
 
+# Local throwaways and scratch directories
+scratch/
+scratch_gsap_skills/
+
 # Image assets
 *.png

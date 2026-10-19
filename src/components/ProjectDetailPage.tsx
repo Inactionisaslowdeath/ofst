@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react"
 import type Lenis from "lenis"
 import StickyNavigation from "./StickyNavigation"
 import FooterSection from "./FooterSection"
+import { unlockBodyScroll } from "../hooks/useScrollLock"
 import type { ProjectItem, ProjectDetailData } from "../data/content"
 
 export interface ProjectDetailPageProps {
@@ -52,7 +53,7 @@ export default function ProjectDetailPage({
   const detail = project?.detail ?? DEFAULT_NULL_AI
 
   useEffect(() => {
-    document.body.style.overflow = ""
+    unlockBodyScroll()
     if (lenis) {
       lenis.start()
       lenis.scrollTo(0, { immediate: true })
@@ -212,7 +213,7 @@ export default function ProjectDetailPage({
         </div>
       </main>
 
-      {/* Studio Footer with Newsletter, marquee ticker, and full Drkst/OFST branding */}
+      {/* Studio Footer with Newsletter, marquee ticker, and full OFST branding */}
       <FooterSection
         lenis={lenis ?? null}
         onNavigateHome={onNavigateHome}

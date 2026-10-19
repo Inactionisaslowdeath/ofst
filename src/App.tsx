@@ -1,4 +1,5 @@
-import { lazy, Suspense, useEffect, useRef, useState } from "react"
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react"
+import { gsap } from "gsap"
 import ParallaxGallery from "./components/ParallaxGallery"
 import StickyNavigation from "./components/StickyNavigation"
 import ProjectShowcase from "./components/ProjectShowcase"
@@ -11,22 +12,59 @@ import MetricsSection from "./components/MetricsSection"
 import FaqSection from "./components/FaqSection"
 import ContactSection from "./components/ContactSection"
 import FooterSection from "./components/FooterSection"
+import { useSmoothScroll } from "./hooks/useSmoothScroll"
+import { PROJECTS } from "./data/content"
 
 const ProjectDetailPage = lazy(() => import("./components/ProjectDetailPage"))
 const AllProjectsPage = lazy(() => import("./components/AllProjectsPage"))
 const ContactPage = lazy(() => import("./components/ContactPage"))
 const AboutPage = lazy(() => import("./components/AboutPage"))
-import { useSmoothScroll } from "./hooks/useSmoothScroll"
-import { PROJECTS } from "./data/content"
+
+export interface ProjectViewState {
+  type: "project"
+  projectId: number
+}
+
+export type ViewState = { type: "home" } | { type: "catalog" } | {
+  type: "contact"
+} | { type: "about" } | ProjectViewState
 
 export default function App() {
-  const [project, setProject] = useState<number | null>(null)
-  const [showCatalog, setShowCatalog] = useState<boolean>(false)
-  const [showContact, setShowContact] = useState<boolean>(false)
-  const [showAbout, setShowAbout] = useState<boolean>(false)
+  const [viewState, setViewState] = useState<ViewState>(() => {
+    if (typeof window !== "undefined" && window.location.hash) {
+      const hash = window.location.hash.toLowerCase()
+      if (hash === "#projects" || hash === "#work" || hash === "#catalog") {
+        return { type: "catalog" }
+      }
+      if (hash === "#contact") return { type: "contact" }
+      if (hash === "#about") return { type: "about" }
+    }
+    return { type: "home" }
+  })
+
   const heroRef = useRef<HTMLElement | null>(null)
   const heroFadeRef = useRef<HTMLDivElement | null>(null)
   const lenisInstance = useSmoothScroll()
+
+  const navigate = useCallback((nextState: ViewState) => {
+    setViewState(nextState)
+    if (typeof window !== "undefined" && window.history) {
+      window.history.pushState(nextState, "")
+    }
+  }, [])
+
+  // Sync browser back/forward buttons with ViewState
+  useEffect(() => {
+    const handlePopState = (event: PopStateEvent) => {
+      if (event.state && typeof event.state.type === "string") {
+        setViewState(event.state as ViewState)
+      } else {
+        setViewState({ type: "home" })
+      }
+    }
+    window.addEventListener("popstate", handlePopState)
+    return () => window.removeEventListener("popstate", handlePopState)
+  }, [])
 
   // Hero bottom fade scroll progress calculation
   useEffect(() => {
@@ -54,9 +92,10 @@ export default function App() {
 
       // Smoothly fade out as the bottom of the hero approaches the viewport bottom
       if (rect.bottom < windowHeight) {
-        const progress = Math.max(
+        const progress = gsap.utils.clamp(
           0,
-          Math.min(1, (rect.bottom - (windowHeight - 200)) / 200),
+          1,
+          (rect.bottom - (windowHeight - 200)) / 200,
         )
         fade.style.opacity = String(progress)
       } else {
@@ -93,148 +132,79 @@ export default function App() {
   useEffect(() => {
     const handleKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        if (project !== null) {
-          setProject(null)
-          setShowCatalog(true)
-        } else if (showCatalog) {
-          setShowCatalog(false)
-        } else if (showContact) {
-          setShowContact(false)
-        } else if (showAbout) {
-          setShowAbout(false)
+        if (viewState.type === "project") {
+          navigate({ type: "catalog" })
+        } else if (viewState.type !== "home") {
+          navigate({ type: "home" })
         }
       }
     }
     document.addEventListener("keydown", handleKey)
     return () => document.removeEventListener("keydown", handleKey)
-  }, [project, showCatalog, showContact, showAbout])
+  }, [viewState, navigate])
 
-  // 1. Render project detail page when a project is selected
-  // Clicking Back inside any Project Details page takes the user to the All Projects page
-  if (project !== null) {
-    const currentProject = PROJECTS[project] ?? null
+  // 1. Render project detail page when a project view is active
+  if (viewState.type === "project") {
+    const currentProject =
+      PROJECTS.find((p) => p.id === viewState.projectId) ?? PROJECTS[0]
     return (
       <Suspense fallback={null}>
         <ProjectDetailPage
           project={currentProject}
-          onBack={() => {
-            setProject(null)
-            setShowCatalog(true)
-          }}
-          onNavigateHome={() => {
-            setProject(null)
-            setShowCatalog(false)
-            setShowContact(false)
-            setShowAbout(false)
-          }}
-          onNavigateContact={() => {
-            setProject(null)
-            setShowCatalog(false)
-            setShowAbout(false)
-            setShowContact(true)
-          }}
-          onNavigateAbout={() => {
-            setProject(null)
-            setShowCatalog(false)
-            setShowContact(false)
-            setShowAbout(true)
-          }}
+          onBack={() => navigate({ type: "catalog" })}
+          onNavigateHome={() => navigate({ type: "home" })}
+          onNavigateContact={() => navigate({ type: "contact" })}
+          onNavigateAbout={() => navigate({ type: "about" })}
           lenis={lenisInstance}
         />
       </Suspense>
     )
   }
 
-  // 2. Render All Projects catalog page when showCatalog is true
-  if (showCatalog) {
+  // 2. Render All Projects catalog page when catalog view is active
+  if (viewState.type === "catalog") {
     return (
       <Suspense fallback={null}>
         <AllProjectsPage
-          onSelectProject={(id) => {
-            setProject(id)
-          }}
-          onNavigateHome={() => {
-            setShowCatalog(false)
-            setProject(null)
-            setShowContact(false)
-            setShowAbout(false)
-          }}
-          onNavigateContact={() => {
-            setProject(null)
-            setShowCatalog(false)
-            setShowAbout(false)
-            setShowContact(true)
-          }}
-          onNavigateAbout={() => {
-            setProject(null)
-            setShowCatalog(false)
-            setShowContact(false)
-            setShowAbout(true)
-          }}
+          onSelectProject={(id) => navigate({ type: "project", projectId: id })}
+          onNavigateHome={() => navigate({ type: "home" })}
+          onNavigateContact={() => navigate({ type: "contact" })}
+          onNavigateAbout={() => navigate({ type: "about" })}
           lenis={lenisInstance}
         />
       </Suspense>
     )
   }
 
-  // 3. Render dedicated Contact page when showContact is true
-  if (showContact) {
+  // 3. Render dedicated Contact page when contact view is active
+  if (viewState.type === "contact") {
     return (
       <Suspense fallback={null}>
         <ContactPage
-          onNavigateHome={() => {
-            setShowContact(false)
-            setShowCatalog(false)
-            setShowAbout(false)
-            setProject(null)
-          }}
-          onNavigateProjects={() => {
-            setShowContact(false)
-            setShowAbout(false)
-            setProject(null)
-            setShowCatalog(true)
-          }}
-          onNavigateAbout={() => {
-            setShowContact(false)
-            setProject(null)
-            setShowCatalog(false)
-            setShowAbout(true)
-          }}
+          onNavigateHome={() => navigate({ type: "home" })}
+          onNavigateProjects={() => navigate({ type: "catalog" })}
+          onNavigateAbout={() => navigate({ type: "about" })}
           lenis={lenisInstance}
         />
       </Suspense>
     )
   }
 
-  // 4. Render dedicated About page when showAbout is true
-  if (showAbout) {
+  // 4. Render dedicated About page when about view is active
+  if (viewState.type === "about") {
     return (
       <Suspense fallback={null}>
         <AboutPage
-          onNavigateHome={() => {
-            setShowAbout(false)
-            setShowContact(false)
-            setShowCatalog(false)
-            setProject(null)
-          }}
-          onNavigateProjects={() => {
-            setShowAbout(false)
-            setShowContact(false)
-            setProject(null)
-            setShowCatalog(true)
-          }}
-          onNavigateContact={() => {
-            setShowAbout(false)
-            setShowCatalog(false)
-            setProject(null)
-            setShowContact(true)
-          }}
+          onNavigateHome={() => navigate({ type: "home" })}
+          onNavigateProjects={() => navigate({ type: "catalog" })}
+          onNavigateContact={() => navigate({ type: "contact" })}
           lenis={lenisInstance}
         />
       </Suspense>
     )
   }
 
+  // 5. Default Home Showcase Shell
   return (
     <div
       id="home"
@@ -242,24 +212,10 @@ export default function App() {
     >
       <StickyNavigation
         heroRef={heroRef}
-        onNavigateProjects={() => {
-          setProject(null)
-          setShowAbout(false)
-          setShowContact(false)
-          setShowCatalog(true)
-        }}
-        onNavigateContact={() => {
-          setProject(null)
-          setShowAbout(false)
-          setShowCatalog(false)
-          setShowContact(true)
-        }}
-        onNavigateAbout={() => {
-          setProject(null)
-          setShowContact(false)
-          setShowCatalog(false)
-          setShowAbout(true)
-        }}
+        onNavigateProjects={() => navigate({ type: "catalog" })}
+        onNavigateContact={() => navigate({ type: "contact" })}
+        onNavigateAbout={() => navigate({ type: "about" })}
+        onNavigateHome={() => navigate({ type: "home" })}
       />
 
       <main className="relative z-10 w-full bg-[var(--bg)] transition-colors duration-300">
@@ -284,11 +240,15 @@ export default function App() {
           {/* Studio Philosophy & Statement */}
           <AboutSection />
 
-          {/* Portfolio Showcase Grid & Detail Modal */}
+          {/* Portfolio Showcase Grid & Detail Navigation */}
           <ProjectShowcase
             projects={PROJECTS}
-            activeProject={project}
-            setActiveProject={setProject}
+            activeProject={null}
+            setActiveProject={(id) => {
+              if (id !== null) {
+                navigate({ type: "project", projectId: id })
+              }
+            }}
           />
 
           {/* Services & Capabilities */}
@@ -314,24 +274,10 @@ export default function App() {
       {/* Sticky Newsletter Curtain & Revealed Bottom Footer */}
       <FooterSection
         lenis={lenisInstance}
-        onNavigateProjects={() => {
-          setProject(null)
-          setShowAbout(false)
-          setShowContact(false)
-          setShowCatalog(true)
-        }}
-        onNavigateContact={() => {
-          setProject(null)
-          setShowAbout(false)
-          setShowCatalog(false)
-          setShowContact(true)
-        }}
-        onNavigateAbout={() => {
-          setProject(null)
-          setShowContact(false)
-          setShowCatalog(false)
-          setShowAbout(true)
-        }}
+        onNavigateProjects={() => navigate({ type: "catalog" })}
+        onNavigateContact={() => navigate({ type: "contact" })}
+        onNavigateAbout={() => navigate({ type: "about" })}
+        onNavigateHome={() => navigate({ type: "home" })}
       />
 
       {/* Viewport top & bottom blur bars */}

@@ -12,7 +12,7 @@ export interface ContactSectionProps {
 }
 
 export function ContactSection({
-  lenis,
+  lenis: _lenis,
   initialConverged,
 }: ContactSectionProps) {
   const [contactStatus, setContactStatus] = useState("")
@@ -20,7 +20,6 @@ export function ContactSection({
   const leftHandRef = useRef<HTMLImageElement | null>(null)
   const rightHandRef = useRef<HTMLImageElement | null>(null)
   const cardRef = useRef<HTMLDivElement | null>(null)
-  const headingRef = useRef<HTMLHeadingElement | null>(null)
 
   useEffect(() => {
     const isJSDOM =
@@ -34,7 +33,6 @@ export function ContactSection({
     const leftHand = leftHandRef.current
     const rightHand = rightHandRef.current
     const card = cardRef.current
-    const heading = headingRef.current
     if (!section || !leftHand || !rightHand || !card) return
 
     // On dedicated contact page, reduced motion, or test environments: static convergence
@@ -108,10 +106,7 @@ export function ContactSection({
         ref={cardRef}
         className="relative z-10 mx-auto max-w-[500px] text-center will-change-transform"
       >
-        <h2
-          ref={headingRef}
-          className="text-[32px] leading-[41.6px] tracking-tight-statement"
-        >
+        <h2 className="text-[32px] leading-[41.6px] tracking-tight-statement">
           <RevealLine className="inline-block text-gradient-black-to-white">
             Let's build with intent.
           </RevealLine>

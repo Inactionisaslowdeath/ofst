@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { motion, animate } from "framer-motion"
 
 export interface RevealProps {
@@ -156,7 +156,10 @@ export function AdaptiveRevealParagraph({
                 </span>
               )}
               {words.map((word, wIdx) => (
-                <span key={wIdx} className="scrub-word mr-[0.28em] inline-block">
+                <span
+                  key={wIdx}
+                  className="scrub-word mr-[0.28em] inline-block"
+                >
                   {word}{" "}
                 </span>
               ))}
@@ -190,23 +193,19 @@ export function KineticBarcode({ className = "" }: { className?: string }) {
     const ctx = gsap.context(() => {
       const bars = barcodeRef.current?.querySelectorAll(".barcode-bar")
       if (bars && bars.length > 0) {
-        gsap.fromTo(
-          bars,
-          { scaleY: 0.15, opacity: 0.25 },
-          {
-            scaleY: 1,
-            opacity: 1,
-            stagger: 0.03,
-            ease: "power1.out",
-            scrollTrigger: {
-              trigger: barcodeRef.current,
-              start: "top 85%",
-              end: "center 60%",
-              scrub: 0.8,
-              invalidateOnRefresh: true,
-            },
+        gsap.fromTo(bars, { scaleY: 0.15, opacity: 0.25 }, {
+          scaleY: 1,
+          opacity: 1,
+          stagger: 0.03,
+          ease: "power1.out",
+          scrollTrigger: {
+            trigger: barcodeRef.current,
+            start: "top 85%",
+            end: "center 60%",
+            scrub: 0.8,
+            invalidateOnRefresh: true,
           },
-        )
+        })
       }
     }, barcodeRef)
 

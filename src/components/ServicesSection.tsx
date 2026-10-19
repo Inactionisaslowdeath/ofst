@@ -25,44 +25,38 @@ export function ServicesSection() {
     // Mobile viewports (< 768px): cards enter uncompressed and smoothly compress as they reach the upper zone
     mm.add("(max-width: 767px)", () => {
       const cards =
-        cardsContainerRef.current?.querySelectorAll<HTMLElement>(".service-card")
-      cards?.forEach((card, index) => {
-        gsap.fromTo(
-          card,
-          { scale: 1, y: 0 },
-          {
-            scale: 0.94,
-            y: index * -14,
-            ease: "none",
-            scrollTrigger: {
-              trigger: card,
-              start: "top 38%",
-              end: "top 14%",
-              scrub: true,
-              invalidateOnRefresh: true,
-            },
-          },
+        cardsContainerRef.current?.querySelectorAll<HTMLElement>(
+          ".service-card",
         )
+      cards?.forEach((card, index) => {
+        gsap.fromTo(card, { scale: 1, y: 0 }, {
+          scale: 0.94,
+          y: index * -14,
+          ease: "none",
+          scrollTrigger: {
+            trigger: card,
+            start: "top 38%",
+            end: "top 14%",
+            scrub: true,
+            invalidateOnRefresh: true,
+          },
+        })
 
         const imgInner = card.querySelector<HTMLElement>(
           ".service-card-image-inner",
         )
         if (imgInner) {
-          gsap.fromTo(
-            imgInner,
-            { yPercent: -12 },
-            {
-              yPercent: 12,
-              ease: "none",
-              scrollTrigger: {
-                trigger: card,
-                start: "top bottom",
-                end: "bottom top",
-                scrub: true,
-                invalidateOnRefresh: true,
-              },
+          gsap.fromTo(imgInner, { yPercent: -12 }, {
+            yPercent: 12,
+            ease: "none",
+            scrollTrigger: {
+              trigger: card,
+              start: "top bottom",
+              end: "bottom top",
+              scrub: true,
+              invalidateOnRefresh: true,
             },
-          )
+          })
         }
       })
     })
@@ -70,43 +64,37 @@ export function ServicesSection() {
     // Desktop viewports (>= 768px): preserves exact desktop timing
     mm.add("(min-width: 768px)", () => {
       const cards =
-        cardsContainerRef.current?.querySelectorAll<HTMLElement>(".service-card")
-      cards?.forEach((card) => {
-        gsap.fromTo(
-          card,
-          { scale: 1 },
-          {
-            scale: 0.94,
-            ease: "none",
-            scrollTrigger: {
-              trigger: card,
-              start: "top 65%",
-              end: "top 20%",
-              scrub: true,
-              invalidateOnRefresh: true,
-            },
-          },
+        cardsContainerRef.current?.querySelectorAll<HTMLElement>(
+          ".service-card",
         )
+      cards?.forEach((card) => {
+        gsap.fromTo(card, { scale: 1 }, {
+          scale: 0.94,
+          ease: "none",
+          scrollTrigger: {
+            trigger: card,
+            start: "top 65%",
+            end: "top 20%",
+            scrub: true,
+            invalidateOnRefresh: true,
+          },
+        })
 
         const imgInner = card.querySelector<HTMLElement>(
           ".service-card-image-inner",
         )
         if (imgInner) {
-          gsap.fromTo(
-            imgInner,
-            { yPercent: -12 },
-            {
-              yPercent: 12,
-              ease: "none",
-              scrollTrigger: {
-                trigger: card,
-                start: "top bottom",
-                end: "bottom top",
-                scrub: true,
-                invalidateOnRefresh: true,
-              },
+          gsap.fromTo(imgInner, { yPercent: -12 }, {
+            yPercent: 12,
+            ease: "none",
+            scrollTrigger: {
+              trigger: card,
+              start: "top bottom",
+              end: "bottom top",
+              scrub: true,
+              invalidateOnRefresh: true,
             },
-          )
+          })
         }
       })
     })

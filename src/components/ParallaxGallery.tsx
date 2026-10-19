@@ -115,7 +115,7 @@ export function ParallaxGallery({ lenis }: ParallaxGalleryProps) {
       const total = end - start
 
       if (total <= 0) return
-      const progress = Math.max(0, Math.min(1, (scrollY - start) / total))
+      const progress = gsap.utils.clamp(0, 1, (scrollY - start) / total)
       scrollYProgress.set(progress)
     }
 

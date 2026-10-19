@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { ThemeToggleButton } from "../ThemeToggle"
+import { useScrollLock } from "../hooks/useScrollLock"
 
 export interface StickyNavigationProps {
   heroRef?: React.RefObject<HTMLElement | null>
@@ -47,17 +48,8 @@ export function StickyNavigation({
     }
   }, [heroRef])
 
-  // Prevent background scrolling when mobile menu is open
-  useEffect(() => {
-    if (isMobileMenuOpen) {
-      document.body.style.overflow = "hidden"
-    } else {
-      document.body.style.overflow = ""
-    }
-    return () => {
-      document.body.style.overflow = ""
-    }
-  }, [isMobileMenuOpen])
+  // Prevent background scrolling when mobile menu is open using reference-counted scroll lock
+  useScrollLock(isMobileMenuOpen)
 
   const handleMobileNavClick = (callback?: () => void) => {
     setIsMobileMenuOpen(false)
@@ -71,7 +63,7 @@ export function StickyNavigation({
       <nav
         ref={navRef}
         aria-label="Main navigation"
-        className="group fixed left-1/2 top-[calc(env(safe-area-inset-top,0px)+1rem)] sm:top-5 z-50 flex h-[40px] min-h-[40px] w-[min(calc(100%-32px),540px)] -translate-x-1/2 items-center justify-between gap-1.5 sm:gap-2 rounded-[10px] bg-[#f2f2f2] dark:bg-[#18181b] backdrop-blur-xl px-2.5 sm:px-3 text-[15px] text-[#030303] dark:text-[#f4f4f5] transition-[width,background-color,color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] [contain:layout_paint] motion-reduce:transition-none data-[compact=true]:w-[217px] data-[compact=true]:bg-[#030303] data-[compact=true]:text-white dark:data-[compact=true]:bg-white dark:data-[compact=true]:text-[#030303]"
+        className="group fixed left-1/2 top-[calc(env(safe-area-inset-top,0px)+1rem)] sm:top-5 z-50 flex h-[40px] min-h-[40px] w-[min(calc(100%-32px),540px)] -translate-x-1/2 items-center justify-between gap-1.5 sm:gap-2 rounded-[10px] bg-[#f2f2f2] dark:bg-[#18181b] backdrop-blur-xl px-2.5 sm:px-3 text-[15px] text-[#030303] dark:text-[#f4f4f5] transition-[background-color,color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] [contain:layout_paint] motion-reduce:transition-none data-[compact=true]:w-[217px] data-[compact=true]:bg-[#030303] data-[compact=true]:text-white dark:data-[compact=true]:bg-white dark:data-[compact=true]:text-[#030303]"
       >
         <a
           href="#home"

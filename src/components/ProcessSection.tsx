@@ -240,9 +240,7 @@ export function ProcessSection({ lenis }: ProcessSectionProps) {
                   : "opacity-40 text-white/70 hover:opacity-80 dark:text-[#030303]/70"
               }`}
             >
-              <span className="text-[12px]">
-                0{index + 1}
-              </span>
+              <span className="text-[12px]">0{index + 1}</span>
               <span>{title}</span>
             </button>
           )

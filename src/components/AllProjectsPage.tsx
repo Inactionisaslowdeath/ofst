@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "react"
 import type Lenis from "lenis"
-import { motion, AnimatePresence } from "framer-motion"
+import { motion } from "framer-motion"
 import StickyNavigation from "./StickyNavigation"
 import FooterSection from "./FooterSection"
+import { unlockBodyScroll } from "../hooks/useScrollLock"
 import { RevealBlock } from "./ui/MotionPrimitives"
 import { PROJECTS } from "../data/content"
 
@@ -33,7 +34,7 @@ export default function AllProjectsPage({
   const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    document.body.style.overflow = ""
+    unlockBodyScroll()
     if (lenis) {
       lenis.start()
       lenis.scrollTo(0, { immediate: true })
@@ -48,11 +49,11 @@ export default function AllProjectsPage({
       : PROJECTS.filter((p) => p.category === activeCategory)
 
   const pageMotion = {
-    initial: { y: 56, opacity: 0 },
+    initial: { y: 32, opacity: 0 },
     animate: { y: 0, opacity: 1 },
     transition: {
-      duration: 4.15,
-      ease: [0.12, 1, 0.22, 1] as const,
+      duration: 0.45,
+      ease: [0.16, 1, 0.3, 1] as const,
     },
   }
 
@@ -137,7 +138,7 @@ export default function AllProjectsPage({
                       alt={item.alt || item.name}
                       loading="lazy"
                       decoding="async"
-                      className="size-full object-cover transition-transform duration-300 ease-out @media(hover:hover):group-hover:scale-[1.02]"
+                      className="size-full object-cover transition-transform duration-300 ease-out [@media(hover:hover)]:group-hover:scale-[1.02]"
                     />
                   </div>
                   <div className="mt-2.5 flex items-center justify-between px-0.5">

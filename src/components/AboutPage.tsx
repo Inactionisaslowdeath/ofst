@@ -5,11 +5,11 @@ import StickyNavigation from "./StickyNavigation"
 import ServicesSection from "./ServicesSection"
 import FaqSection from "./FaqSection"
 import FooterSection from "./FooterSection"
+import { unlockBodyScroll } from "../hooks/useScrollLock"
 import {
   AdaptiveRevealParagraph,
   Counter,
   KineticBarcode,
-  RevealBlock,
   RevealLine,
 } from "./ui/MotionPrimitives"
 
@@ -134,7 +134,7 @@ export function AboutPage({
   const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    document.body.style.overflow = ""
+    unlockBodyScroll()
     if (lenis) {
       lenis.start()
       lenis.scrollTo(0, { immediate: true })
@@ -184,12 +184,25 @@ export function AboutPage({
                 {/* Text Container: exact W:765, H:55.22, font size 16, line height 18.4, letter spacing -0.48px */}
                 <div className="w-full max-w-[765px] min-h-[55.22px] mb-[36.76px] max-md:mb-4 text-[16px] leading-[18.4px] tracking-[-0.48px] text-[#030303] dark:text-white select-none">
                   <div className="hidden md:block">
-                    <p className="whitespace-nowrap">Founded in 2023, we've built a practice around the power of contrast—visual,</p>
-                    <p className="whitespace-nowrap">conceptual, and emotional. We believe the most compelling digital experiences</p>
-                    <p>don't try to please everyone. They make deliberate choices that resonate deeply with the right audience.</p>
+                    <p className="whitespace-nowrap">
+                      Founded in 2023, we've built a practice around the power
+                      of contrast—visual,
+                    </p>
+                    <p className="whitespace-nowrap">
+                      conceptual, and emotional. We believe the most compelling
+                      digital experiences
+                    </p>
+                    <p>
+                      don't try to please everyone. They make deliberate choices
+                      that resonate deeply with the right audience.
+                    </p>
                   </div>
                   <p className="block md:hidden">
-                    Founded in 2023, we've built a practice around the power of contrast—visual, conceptual, and emotional. We believe the most compelling digital experiences don't try to please everyone. They make deliberate choices that resonate deeply with the right audience.
+                    Founded in 2023, we've built a practice around the power of
+                    contrast—visual, conceptual, and emotional. We believe the
+                    most compelling digital experiences don't try to please
+                    everyone. They make deliberate choices that resonate deeply
+                    with the right audience.
                   </p>
                 </div>
 

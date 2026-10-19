@@ -22,7 +22,9 @@ describe("AboutSection", () => {
   it("renders the studio manifesto text with scrub words", () => {
     render(<AboutSection />)
 
-    expect(screen.getAllByText("At OFST,", { exact: false }).length).toBeGreaterThan(0)
+    expect(
+      screen.getAllByText("At OFST,", { exact: false }).length,
+    ).toBeGreaterThan(0)
     expect(
       screen.getAllByText("strategy,", { exact: false }).length,
     ).toBeGreaterThan(0)
@@ -32,9 +34,12 @@ describe("AboutSection", () => {
     expect(
       screen.getAllByText((_, el) => {
         if (!el) return false
-        const hasText = /to make digital experiences clear/i.test(el.textContent ?? "")
+        const hasText = /to make digital experiences clear/i.test(
+          el.textContent ?? "",
+        )
         const childrenDont = Array.from(el.children).every(
-          (c) => !/to make digital experiences clear/i.test(c.textContent ?? ""),
+          (c) =>
+            !/to make digital experiences clear/i.test(c.textContent ?? ""),
         )
         return hasText && childrenDont
       }).length,

@@ -140,7 +140,7 @@ export function FooterSection({
       </div>
 
       {/* Native sticky underlay: no transform or scroll handler required. */}
-      <footer className="sticky bottom-0 -z-10 flex h-[90svh] w-full flex-col overflow-hidden">
+      <footer className="sticky bottom-0 -z-10 flex h-[90dvh] w-full flex-col overflow-hidden">
         <div className="mx-2 flex h-full flex-col justify-between bg-[#030303] px-5 pb-8 pt-10 text-white">
           <div className="flex flex-1 items-center justify-center py-6 sm:py-10">
             <img

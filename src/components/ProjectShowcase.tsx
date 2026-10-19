@@ -55,21 +55,17 @@ export function ProjectShowcase({
         const innerImg = card.querySelector<HTMLElement>(".project-image-inner")
         if (!innerImg) return
 
-        gsap.fromTo(
-          innerImg,
-          { yPercent: -18 },
-          {
-            yPercent: 18,
-            ease: "none",
-            scrollTrigger: {
-              trigger: card,
-              start: "top bottom",
-              end: "bottom top",
-              scrub: true,
-              invalidateOnRefresh: true,
-            },
+        gsap.fromTo(innerImg, { yPercent: -18 }, {
+          yPercent: 18,
+          ease: "none",
+          scrollTrigger: {
+            trigger: card,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: true,
+            invalidateOnRefresh: true,
           },
-        )
+        })
       })
     }, sectionRef)
 
@@ -107,7 +103,7 @@ export function ProjectShowcase({
               <img
                 src={`/assets/${projects[0].image}`}
                 alt={projects[0].alt || projects[0].name}
-                className="size-full object-cover transition-opacity duration-200 @media(hover:hover):group-hover:opacity-85"
+                className="size-full object-cover transition-opacity duration-200 [@media(hover:hover)]:group-hover:opacity-85"
               />
             </div>
           </div>
@@ -129,7 +125,7 @@ export function ProjectShowcase({
                   <img
                     src={`/assets/${item.image}`}
                     alt={item.name}
-                    className="size-full object-cover transition-opacity duration-200 @media(hover:hover):group-hover:opacity-85"
+                    className="size-full object-cover transition-opacity duration-200 [@media(hover:hover)]:group-hover:opacity-85"
                   />
                 </div>
               </div>

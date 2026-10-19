@@ -5,6 +5,7 @@ import StickyNavigation from "./StickyNavigation"
 import ContactSection from "./ContactSection"
 import FaqSection from "./FaqSection"
 import FooterSection from "./FooterSection"
+import { unlockBodyScroll } from "../hooks/useScrollLock"
 
 export interface ContactPageProps {
   onNavigateHome: () => void
@@ -22,7 +23,7 @@ export function ContactPage({
   const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    document.body.style.overflow = ""
+    unlockBodyScroll()
     if (lenis) {
       lenis.start()
       lenis.scrollTo(0, { immediate: true })
@@ -50,9 +51,9 @@ export function ContactPage({
       {/* Main Content Layer: opaque background scrolling above sticky footer */}
       <div className="relative z-10 w-full bg-[var(--bg)] transition-colors duration-300">
         <motion.main
-          initial={{ y: 56, opacity: 0 }}
+          initial={{ y: 32, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 4.15, ease: [0.12, 1, 0.22, 1] }}
+          transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
           className="mx-auto w-full max-w-[1560px] px-4 sm:px-5 md:px-10 pt-24 sm:pt-28 md:pt-32"
         >
           {/* Exact Contact Section from the Home Page */}
